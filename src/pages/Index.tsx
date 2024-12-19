@@ -7,6 +7,7 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import MagicBanner from "@/components/MagicBanner";
+import Organizer from "@/components/Organizer";
 
 const products = [
   {
@@ -30,7 +31,30 @@ const products = [
     price: 49,
     category: "Template",
   },
+  {
+    title: "Landing Page Kit",
+    description: "Set of customizable landing page templates for various business needs.",
+    image: "/placeholder.svg",
+    price: 59,
+    category: "UI Kit",
+  },
+  {
+    title: "Mobile App UI Pack",
+    description: "Modern UI elements for building mobile applications with ease.",
+    image: "/placeholder.svg",
+    price: 89,
+    category: "UI Kit",
+  },
+  {
+    title: "Sales Funnel Builder",
+    description: "A powerful tool to create and optimize sales funnels for boosting conversions.",
+    image: "/placeholder.svg",
+    price: 119,
+    category: "Funnel",
+  },
 ];
+
+
 
 const Index = () => {
   const navigate = useNavigate();
@@ -78,6 +102,7 @@ const Index = () => {
           </div>
         </div>
       </section>
+      <Organizer/>
 
       
       <section className="section-padding bg-slate-50">
