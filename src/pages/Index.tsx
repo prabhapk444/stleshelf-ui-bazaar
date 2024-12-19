@@ -6,6 +6,7 @@ import { ArrowRight, Star } from "lucide-react";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import MagicBanner from "@/components/MagicBanner";
 
 const products = [
   {
@@ -57,9 +58,11 @@ const Index = () => {
   return (
     <div className="min-h-screen">
       <Navbar />
+      <MagicBanner/>
       
       {/* Hero Section */}
       <section className="pt-32 pb-16 md:pt-40 md:pb-24 container-padding">
+    
         <div className="container mx-auto text-center">
           <h1 className="text-4xl md:text-6xl font-bold mb-6 animate-fade-in">
             Premium UI Components for Modern Developers

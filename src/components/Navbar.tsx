@@ -98,52 +98,54 @@ export const Navbar = () => {
         </div>
 
         {/* Mobile Navigation Menu */}
-        {isOpen && (
-          <div className="md:hidden absolute top-16 left-0 right-0 bg-white border-b animate-fade-in">
-            <div className="flex flex-col space-y-4 p-4">
-              <Link to="/" className="flex items-center space-x-2" onClick={() => setIsOpen(false)}>
-                <Home size={20} />
-                <span>Home</span>
-              </Link>
-              <Link to="/about" className="hover:text-gray-600" onClick={() => setIsOpen(false)}>
-                About
-              </Link>
-              {/* Mobile Categories */}
-              {categories.map((category) => (
-                <div key={category.title} className="space-y-2">
-                  <div className="font-medium">{category.title}</div>
-                  <div className="pl-4 space-y-2">
-                    {category.subcategories.map((subcategory) => (
-                      <Link
-                        key={subcategory.title}
-                        to={subcategory.href}
-                        className="block text-slate-600 hover:text-slate-900 transition-colors"
-                        onClick={() => setIsOpen(false)}
-                      >
-                        {subcategory.title}
-                      </Link>
-                    ))}
-                  </div>
-                </div>
-              ))}
-              {profile?.role === 'admin' && (
-                <Link to="/admin" className="flex items-center space-x-2" onClick={() => setIsOpen(false)}>
-                  <Settings size={20} />
-                  <span>Admin</span>
-                </Link>
-              )}
-              <Link to="/cart" className="flex items-center space-x-2" onClick={() => setIsOpen(false)}>
-                <ShoppingCart size={20} />
-                <span>Cart</span>
-              </Link>
-              <Button variant="ghost" onClick={handleSignOut} className="w-full justify-start">
-                <User size={20} className="mr-2" />
-                <span className="mr-2">{profile?.name || 'User'}</span>
-                <span className="text-sm text-gray-500">(Logout)</span>
-              </Button>
-            </div>
-          </div>
-        )}
+{isOpen && (
+  <div className="md:hidden absolute top-16 left-0 right-0 bg-white border-b animate-fade-in">
+    <div className="flex flex-col space-y-4 p-4">
+      {/* Home Link */}
+      <Link to="/" className="flex items-center space-x-2" onClick={() => setIsOpen(false)}>
+        <Home size={20} />
+        <span>Home</span>
+      </Link>
+      {/* About Link */}
+      <Link to="/about" className="flex items-center space-x-2 hover:text-gray-600" onClick={() => setIsOpen(false)}>
+        <span>About</span>
+      </Link>
+      {/* Categories */}
+      <div className="space-y-2">
+        <div className="font-medium">Categories</div>
+        <div className="pl-4 space-y-2">
+          {categories.map((category) => (
+            <Link
+              key={category.title}
+              to={category.href || '#'}
+              className="block text-slate-600 hover:text-slate-900 transition-colors"
+              onClick={() => setIsOpen(false)}
+            >
+              {category.title}
+            </Link>
+          ))}
+        </div>
+      </div>
+      {/* User Icon & Logout */}
+      <div className="flex items-center space-x-4">
+        <User size={20} />
+        <Button
+          variant="ghost"
+          onClick={handleSignOut}
+          className="flex items-center space-x-2"
+        >
+          <span>Logout</span>
+        </Button>
+      </div>
+      {/* Cart Icon */}
+      <Link to="/cart" className="flex items-center space-x-2" onClick={() => setIsOpen(false)}>
+        <ShoppingCart size={20} />
+        <span>Cart</span>
+      </Link>
+    </div>
+  </div>
+)}
+
       </div>
     </nav>
   );
