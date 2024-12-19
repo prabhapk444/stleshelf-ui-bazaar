@@ -2,10 +2,18 @@ import { useState } from "react";
 import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CategoryMenu } from "./CategoryMenu";
-import { categories } from "./CategoryMenu";  // Add this import
+import { categories } from "./CategoryMenu";
+import { supabase } from "@/integrations/supabase/client";
+import { useNavigate } from "react-router-dom";
 
 export const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const navigate = useNavigate();
+
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+    navigate("/auth");
+  };
 
   return (
     <nav className="fixed w-full z-50 bg-white/80 backdrop-blur-md border-b">
@@ -18,8 +26,8 @@ export const Navbar = () => {
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
             <CategoryMenu />
-            <Button variant="default" className="ml-4">
-              Get Started
+            <Button variant="ghost" onClick={handleSignOut}>
+              Sign Out
             </Button>
           </div>
 
@@ -51,8 +59,8 @@ export const Navbar = () => {
                   </div>
                 </div>
               ))}
-              <Button variant="default" className="w-full">
-                Get Started
+              <Button variant="ghost" onClick={handleSignOut} className="w-full">
+                Sign Out
               </Button>
             </div>
           </div>
