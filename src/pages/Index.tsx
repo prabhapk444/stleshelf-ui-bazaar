@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import MagicBanner from "@/components/MagicBanner";
 import Organizer from "@/components/Organizer";
+import { motion } from "framer-motion";
 
 const products = [
   {
@@ -53,6 +54,15 @@ const products = [
     category: "Funnel",
   },
 ];
+
+const productAnimation = {
+  hidden: { opacity: 0, x: -100 },
+  visible: (i) => ({
+    opacity: 1,
+    x: 0,
+    transition: { delay: i * 0.2, duration: 0.8 },
+  }),
+};
 
 
 
@@ -109,8 +119,16 @@ const Index = () => {
         <div className="container mx-auto">
           <h2 className="text-3xl font-bold text-center mb-12">Featured Products</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {products.map((product) => (
-              <ProductCard key={product.title} {...product} />
+            {products.map((product,index) => (
+                <motion.div
+                key={product.title}
+                custom={index}
+                initial="hidden"
+                animate="visible"
+                variants={productAnimation}
+              >
+                <ProductCard {...product} />
+              </motion.div>
             ))}
           </div>
         </div>
