@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/navigation-menu";
 import { cn } from "@/lib/utils";
 
-const categories = [
+export const categories = [
   {
     title: "UI Components",
     href: "#",
