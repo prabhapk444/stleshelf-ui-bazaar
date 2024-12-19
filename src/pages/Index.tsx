@@ -36,14 +36,12 @@ const Index = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Check authentication status
+   
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (!session) {
         navigate("/auth");
       }
     });
-
-    // Listen for auth changes
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((event, session) => {
@@ -57,10 +55,10 @@ const Index = () => {
 
   return (
     <div className="min-h-screen">
-      <Navbar />
+      <Navbar /><br /><br /><br />
       <MagicBanner/>
       
-      {/* Hero Section */}
+ 
       <section className="pt-32 pb-16 md:pt-40 md:pb-24 container-padding">
     
         <div className="container mx-auto text-center">
@@ -81,7 +79,7 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Featured Products */}
+      
       <section className="section-padding bg-slate-50">
         <div className="container mx-auto">
           <h2 className="text-3xl font-bold text-center mb-12">Featured Products</h2>
@@ -93,7 +91,6 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Testimonials */}
       <section className="section-padding">
         <div className="container mx-auto">
           <h2 className="text-3xl font-bold text-center mb-12">What Developers Say</h2>
@@ -121,25 +118,6 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Newsletter */}
-      <section className="section-padding bg-slate-900 text-white">
-        <div className="container mx-auto text-center">
-          <h2 className="text-3xl font-bold mb-6">Stay Updated</h2>
-          <p className="text-slate-300 mb-8 max-w-2xl mx-auto">
-            Subscribe to our newsletter for new component releases, updates, and exclusive offers.
-          </p>
-          <form className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
-            <input
-              type="email"
-              placeholder="Enter your email"
-              className="flex-1 px-4 py-2 rounded-md text-slate-900"
-            />
-            <Button variant="default" size="lg">
-              Subscribe
-            </Button>
-          </form>
-        </div>
-      </section>
     </div>
   );
 };

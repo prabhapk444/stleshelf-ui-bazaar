@@ -65,7 +65,7 @@ const MagicBanner = () => {
                     </h1>
                   </div>
                   <div className="my-5">
-                    <h1 className="drop-shadow-2xl text-primary text-5xl lg:text-7xl font-bold">
+                    <h1 className="drop-shadow-2xl text-slate-200 text-5xl lg:text-7xl font-bold">
                       Get Now!
                     </h1>
                   </div>
