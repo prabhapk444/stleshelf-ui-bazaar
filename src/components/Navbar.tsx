@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { CategoryMenu } from "./CategoryMenu";
 
 export const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -15,25 +16,14 @@ export const Navbar = () => {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
-            <a href="#products" className="text-slate-600 hover:text-slate-900 transition-colors">
-              Products
-            </a>
-            <a href="#categories" className="text-slate-600 hover:text-slate-900 transition-colors">
-              Categories
-            </a>
-            <a href="#pricing" className="text-slate-600 hover:text-slate-900 transition-colors">
-              Pricing
-            </a>
+            <CategoryMenu />
             <Button variant="default" className="ml-4">
               Get Started
             </Button>
           </div>
 
           {/* Mobile Navigation Button */}
-          <button
-            className="md:hidden"
-            onClick={() => setIsOpen(!isOpen)}
-          >
+          <button className="md:hidden" onClick={() => setIsOpen(!isOpen)}>
             {isOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
         </div>
@@ -42,27 +32,24 @@ export const Navbar = () => {
         {isOpen && (
           <div className="md:hidden absolute top-16 left-0 right-0 bg-white border-b animate-fade-in">
             <div className="flex flex-col space-y-4 p-4">
-              <a
-                href="#products"
-                className="text-slate-600 hover:text-slate-900 transition-colors"
-                onClick={() => setIsOpen(false)}
-              >
-                Products
-              </a>
-              <a
-                href="#categories"
-                className="text-slate-600 hover:text-slate-900 transition-colors"
-                onClick={() => setIsOpen(false)}
-              >
-                Categories
-              </a>
-              <a
-                href="#pricing"
-                className="text-slate-600 hover:text-slate-900 transition-colors"
-                onClick={() => setIsOpen(false)}
-              >
-                Pricing
-              </a>
+              {/* Mobile Categories */}
+              {categories.map((category) => (
+                <div key={category.title} className="space-y-2">
+                  <div className="font-medium">{category.title}</div>
+                  <div className="pl-4 space-y-2">
+                    {category.subcategories.map((subcategory) => (
+                      <a
+                        key={subcategory.title}
+                        href={subcategory.href}
+                        className="block text-slate-600 hover:text-slate-900 transition-colors"
+                        onClick={() => setIsOpen(false)}
+                      >
+                        {subcategory.title}
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              ))}
               <Button variant="default" className="w-full">
                 Get Started
               </Button>
