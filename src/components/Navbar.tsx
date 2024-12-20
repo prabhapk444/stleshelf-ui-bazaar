@@ -13,7 +13,7 @@ import { Link } from "react-router-dom";
 
 export const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [profile, setProfile] = useState<{ name: string | null } | null>(null);
+  const [profile, setProfile] = useState<{ name: string | null; role: string | null } | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
 
@@ -26,7 +26,7 @@ export const Navbar = () => {
         if (session?.user) {
           const { data: profileData, error } = await supabase
             .from("profiles")
-            .select("name")
+            .select("name, role")
             .eq("id", session.user.id)
             .single();
             
@@ -82,6 +82,9 @@ export const Navbar = () => {
               <Link to="/" className="hover:text-gray-600">Home</Link>
               <Link to="/about" className="hover:text-gray-600">About</Link>
               <Link to="/categories" className="hover:text-gray-600">Categories</Link>
+              {profile?.role === 'admin' && (
+                <Link to="/admin" className="hover:text-gray-600">Admin</Link>
+              )}
             </div>
           </div>
 
@@ -103,6 +106,11 @@ export const Navbar = () => {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
+                  {profile.role === 'admin' && (
+                    <DropdownMenuItem onClick={() => navigate("/admin")}>
+                      Admin Dashboard
+                    </DropdownMenuItem>
+                  )}
                   <DropdownMenuItem onClick={handleSignOut}>
                     <LogOut size={16} className="mr-2" /> Logout
                   </DropdownMenuItem>
@@ -132,6 +140,11 @@ export const Navbar = () => {
               <Link to="/categories" className="hover:text-gray-600" onClick={() => setIsOpen(false)}>
                 Categories
               </Link>
+              {profile?.role === 'admin' && (
+                <Link to="/admin" className="hover:text-gray-600" onClick={() => setIsOpen(false)}>
+                  Admin Dashboard
+                </Link>
+              )}
               {profile ? (
                 <Button
                   variant="ghost"
