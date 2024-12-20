@@ -14,42 +14,59 @@ import { Link } from "react-router-dom";
 export const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [profile, setProfile] = useState<{ name: string | null } | null>(null);
-  const [searchQuery, setSearchQuery] = useState(""); 
+  const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchProfile = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session?.user) {
-        const { data } = await supabase
-          .from("profiles")
-          .select("name")
-          .eq("id", session.user.id)
-          .single();
-        setProfile(data);
-      } else {
+      try {
+        setIsLoading(true);
+        const { data: { session } } = await supabase.auth.getSession();
+        
+        if (session?.user) {
+          const { data: profileData, error } = await supabase
+            .from("profiles")
+            .select("name")
+            .eq("id", session.user.id)
+            .single();
+            
+          if (error) {
+            console.error("Error fetching profile:", error);
+            setProfile(null);
+          } else {
+            setProfile(profileData);
+          }
+        } else {
+          setProfile(null);
+        }
+      } catch (error) {
+        console.error("Error in auth check:", error);
         setProfile(null);
+      } finally {
+        setIsLoading(false);
       }
     };
 
     fetchProfile();
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(() => {
-      fetchProfile();
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session) {
+        fetchProfile();
+      } else {
+        setProfile(null);
+      }
     });
 
     return () => subscription.unsubscribe();
   }, []);
 
   const handleSignOut = async () => {
-    await supabase.auth.signOut();
-    navigate("/auth");
-  };
-
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      navigate(`/search?query=${encodeURIComponent(searchQuery)}`);
+    try {
+      await supabase.auth.signOut();
+      setProfile(null);
+      navigate("/auth");
+    } catch (error) {
+      console.error("Error signing out:", error);
     }
   };
 
@@ -76,7 +93,9 @@ export const Navbar = () => {
               </span>
             </Link>
             
-            {profile ? (
+            {isLoading ? (
+              <div className="h-10 w-24 bg-gray-200 animate-pulse rounded" />
+            ) : profile ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" className="flex items-center space-x-2">
