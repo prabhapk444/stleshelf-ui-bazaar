@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Modal } from "@/components/ui/modal"; // Import a modal component
 import {
   Table,
   TableBody,
@@ -16,7 +17,9 @@ import { Pencil, Trash2, Plus } from "lucide-react";
 export const CategoriesManager = () => {
   const [categories, setCategories] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [newCategory, setNewCategory] = useState("");
+  const [currentCategory, setCurrentCategory] = useState<any>(null); 
+  const [newCategory, setNewCategory] = useState(""); 
+  const [isModalOpen, setModalOpen] = useState(false); 
   const { toast } = useToast();
 
   const fetchCategories = async () => {
@@ -43,22 +46,38 @@ export const CategoriesManager = () => {
     fetchCategories();
   }, []);
 
-  const handleAddCategory = async () => {
+  const handleSaveCategory = async () => {
     if (!newCategory.trim()) return;
 
     try {
-      const { error } = await supabase
-        .from("categories")
-        .insert([{ name: newCategory.trim() }]);
+      if (currentCategory) {
+        const { error } = await supabase
+          .from("categories")
+          .update({ name: newCategory.trim() })
+          .eq("id", currentCategory.id);
 
-      if (error) throw error;
+        if (error) throw error;
 
-      toast({
-        title: "Success",
-        description: "Category added successfully",
-      });
-      
+        toast({
+          title: "Success",
+          description: "Category updated successfully",
+        });
+      } else {
+        const { error } = await supabase
+          .from("categories")
+          .insert([{ name: newCategory.trim() }]);
+
+        if (error) throw error;
+
+        toast({
+          title: "Success",
+          description: "Category added successfully",
+        });
+      }
+
       setNewCategory("");
+      setCurrentCategory(null);
+      setModalOpen(false);
       fetchCategories();
     } catch (error: any) {
       toast({
@@ -82,7 +101,7 @@ export const CategoriesManager = () => {
         title: "Success",
         description: "Category deleted successfully",
       });
-      
+
       fetchCategories();
     } catch (error: any) {
       toast({
@@ -101,42 +120,78 @@ export const CategoriesManager = () => {
     <div>
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-semibold">Categories</h2>
-        <div className="flex space-x-2">
-          <Input
-            placeholder="New category name"
-            value={newCategory}
-            onChange={(e) => setNewCategory(e.target.value)}
-          />
-          <Button onClick={handleAddCategory}>
-            <Plus className="mr-2 h-4 w-4" /> Add Category
-          </Button>
-        </div>
+        <Button
+          onClick={() => {
+            setNewCategory("");
+            setCurrentCategory(null);
+            setModalOpen(true);
+          }}
+        >
+          <Plus className="mr-2 h-4 w-4" /> Add Category
+        </Button>
       </div>
-
       <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Name</TableHead>
-            <TableHead>Actions</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {categories.map((category) => (
-            <TableRow key={category.id}>
-              <TableCell>{category.name}</TableCell>
-              <TableCell>
-                <Button
-                  variant="destructive"
-                  size="icon"
-                  onClick={() => handleDelete(category.id)}
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+  <TableHeader>
+    <TableRow>
+      <TableHead>S.No</TableHead> 
+      <TableHead>Name</TableHead>
+      <TableHead>Actions</TableHead>
+    </TableRow>
+  </TableHeader>
+  <TableBody>
+    {categories.map((category, index) => (
+      <TableRow key={category.id}>
+        <TableCell>{index + 1}</TableCell> 
+        <TableCell>{category.name}</TableCell>
+        <TableCell>
+          <div className="flex space-x-2">
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => {
+                setNewCategory(category.name);
+                setCurrentCategory(category);
+                setModalOpen(true);
+              }}
+            >
+              <Pencil className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="destructive"
+              size="icon"
+              onClick={() => handleDelete(category.id)}
+            >
+              <Trash2 className="h-4 w-4" />
+            </Button>
+          </div>
+        </TableCell>
+      </TableRow>
+    ))}
+  </TableBody>
+</Table>
+
+      <Modal isOpen={isModalOpen} onClose={() => setModalOpen(false)}>
+  <div className="p-4">
+    <h2 className="text-xl font-semibold mb-4">
+      {currentCategory ? "Edit Category" : "Add Category"}
+    </h2>
+    <Input
+      placeholder="Category name"
+      value={newCategory}
+      onChange={(e) => setNewCategory(e.target.value)}
+    />
+    <div className="flex justify-end space-x-2 mt-4">
+      <Button variant="outline" onClick={() => setModalOpen(false)}>
+        Cancel
+      </Button>
+      <Button onClick={handleSaveCategory}>
+        {currentCategory ? "Update" : "Add"}
+      </Button>
+    </div>
+  </div>
+</Modal>
+
+    
     </div>
   );
 };
