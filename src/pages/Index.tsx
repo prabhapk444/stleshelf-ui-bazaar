@@ -3,79 +3,80 @@ import { ProductCard } from "@/components/ProductCard";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ArrowRight, Star } from "lucide-react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import MagicBanner from "@/components/MagicBanner";
 import Organizer from "@/components/Organizer";
 import { motion } from "framer-motion";
+import { useQuery } from "@tanstack/react-query";
 
-const products = [
-  {
-    title: "Modern Dashboard Kit",
-    description: "Complete admin dashboard with analytics, charts, and customizable components.",
-    image: "/placeholder.svg",
-    price: 99,
-    category: "Dashboard",
-  },
-  {
-    title: "E-commerce UI Pack",
-    description: "Premium UI components specifically designed for online stores.",
-    image: "/placeholder.svg",
-    price: 79,
-    category: "UI Kit",
-  },
-  {
-    title: "Portfolio Templates",
-    description: "Beautiful and responsive portfolio templates for creative professionals.",
-    image: "/placeholder.svg",
-    price: 49,
-    category: "Template",
-  },
-  {
-    title: "Landing Page Kit",
-    description: "Set of customizable landing page templates for various business needs.",
-    image: "/placeholder.svg",
-    price: 59,
-    category: "UI Kit",
-  },
-  {
-    title: "Mobile App UI Pack",
-    description: "Modern UI elements for building mobile applications with ease.",
-    image: "/placeholder.svg",
-    price: 89,
-    category: "UI Kit",
-  },
-  {
-    title: "Sales Funnel Builder",
-    description: "A powerful tool to create and optimize sales funnels for boosting conversions.",
-    image: "/placeholder.svg",
-    price: 119,
-    category: "Funnel",
-  },
-];
+interface Product {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  image_url: string;
+  category: { name: string } | null;
+}
+
+interface Category {
+  id: string;
+  name: string;
+}
+
+const fetchProducts = async () => {
+  const { data, error } = await supabase
+    .from('products')
+    .select(`
+      *,
+      category:categories(name)
+    `)
+    .limit(6);
+  
+  if (error) throw error;
+  return data as Product[];
+};
+
+const fetchCategories = async () => {
+  const { data, error } = await supabase
+    .from('categories')
+    .select('*');
+  
+  if (error) throw error;
+  return data as Category[];
+};
 
 const productAnimation = {
   hidden: { opacity: 0, x: -100 },
-  visible: (i) => ({
+  visible: (i: number) => ({
     opacity: 1,
     x: 0,
     transition: { delay: i * 0.2, duration: 0.8 },
   }),
 };
 
-
-
 const Index = () => {
   const navigate = useNavigate();
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+
+  const { data: products = [], isLoading: productsLoading } = useQuery({
+    queryKey: ['products'],
+    queryFn: fetchProducts,
+  });
+
+  const { data: categories = [], isLoading: categoriesLoading } = useQuery({
+    queryKey: ['categories'],
+    queryFn: fetchCategories,
+  });
 
   useEffect(() => {
-   
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (!session) {
         navigate("/auth");
       }
     });
+    
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((event, session) => {
@@ -87,14 +88,17 @@ const Index = () => {
     return () => subscription.unsubscribe();
   }, [navigate]);
 
+  const filteredProducts = selectedCategory
+    ? products.filter(product => product.category?.name === selectedCategory)
+    : products;
+
   return (
     <div className="min-h-screen">
-      <Navbar /><br /><br /><br />
-      <MagicBanner/>
+      <Navbar />
+      <br /><br /><br />
+      <MagicBanner />
       
- 
       <section className="pt-32 pb-16 md:pt-40 md:pb-24 container-padding">
-    
         <div className="container mx-auto text-center">
           <h1 className="text-4xl md:text-6xl font-bold mb-6 animate-fade-in">
             Premium UI Components for Modern Developers
@@ -112,25 +116,61 @@ const Index = () => {
           </div>
         </div>
       </section>
-      <Organizer/>
 
-      
+      <Organizer />
+
       <section className="section-padding bg-slate-50">
         <div className="container mx-auto">
-          <h2 className="text-3xl font-bold text-center mb-12">Featured Products</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {products.map((product,index) => (
-                <motion.div
-                key={product.title}
-                custom={index}
-                initial="hidden"
-                animate="visible"
-                variants={productAnimation}
+          <div className="flex flex-col items-center mb-8">
+            <h2 className="text-3xl font-bold text-center mb-6">Featured Products</h2>
+            <div className="flex gap-2 flex-wrap justify-center">
+              <Button
+                variant={selectedCategory === null ? "default" : "outline"}
+                onClick={() => setSelectedCategory(null)}
+                className="mb-2"
               >
-                <ProductCard {...product} />
-              </motion.div>
-            ))}
+                All
+              </Button>
+              {categories.map((category) => (
+                <Button
+                  key={category.id}
+                  variant={selectedCategory === category.name ? "default" : "outline"}
+                  onClick={() => setSelectedCategory(category.name)}
+                  className="mb-2"
+                >
+                  {category.name}
+                </Button>
+              ))}
+            </div>
           </div>
+
+          {productsLoading ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {[1, 2, 3].map((i) => (
+                <Card key={i} className="h-96 animate-pulse bg-gray-100" />
+              ))}
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {filteredProducts.map((product, index) => (
+                <motion.div
+                  key={product.id}
+                  custom={index}
+                  initial="hidden"
+                  animate="visible"
+                  variants={productAnimation}
+                >
+                  <ProductCard
+                    title={product.name}
+                    description={product.description || ""}
+                    image={product.image_url || "/placeholder.svg"}
+                    price={Number(product.price)}
+                    category={product.category?.name || "Uncategorized"}
+                  />
+                </motion.div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
@@ -160,7 +200,6 @@ const Index = () => {
           </div>
         </div>
       </section>
-
     </div>
   );
 };

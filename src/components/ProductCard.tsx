@@ -1,5 +1,7 @@
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { ShoppingCart } from "lucide-react";
 
 interface ProductCardProps {
   title: string;
@@ -17,7 +19,7 @@ export const ProductCard = ({
   category,
 }: ProductCardProps) => {
   return (
-    <Card className="overflow-hidden hover-card glass-card">
+    <Card className="overflow-hidden hover:shadow-lg transition-shadow duration-300">
       <div className="aspect-video relative overflow-hidden">
         <img
           src={image}
@@ -30,10 +32,11 @@ export const ProductCard = ({
         <h3 className="text-xl font-semibold mb-2">{title}</h3>
         <p className="text-slate-600 mb-4 line-clamp-2">{description}</p>
         <div className="flex justify-between items-center">
-          <span className="text-2xl font-bold">${price}</span>
-          <button className="px-4 py-2 bg-slate-900 text-white rounded-md hover:bg-slate-800 transition-colors">
-            View Details
-          </button>
+          <span className="text-2xl font-bold">${price.toFixed(2)}</span>
+          <Button className="flex items-center gap-2">
+            <ShoppingCart size={20} />
+            Add to Cart
+          </Button>
         </div>
       </div>
     </Card>
