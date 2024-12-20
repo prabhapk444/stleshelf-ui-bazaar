@@ -22,7 +22,7 @@ const MagicBanner = () => {
     );
     setIsNext(true);
     setIsPrev(false);
-    setTimeout(() => setIsNext(false), 500); 
+    setTimeout(() => setIsNext(false), 500);
   };
 
   const prevSlide = () => {
@@ -31,7 +31,7 @@ const MagicBanner = () => {
     );
     setIsPrev(true);
     setIsNext(false);
-    setTimeout(() => setIsPrev(false), 500); 
+    setTimeout(() => setIsPrev(false), 500);
   };
 
   useEffect(() => {
@@ -43,7 +43,7 @@ const MagicBanner = () => {
   }, [currentSlide]);
 
   return (
-    <div className="mt-12 lg:mt-10">
+    <div className="mt-16">
       <div className={`carousel ${isNext ? "next" : ""} ${isPrev ? "prev" : ""}`}>
         <div className="list">
           {images.map((img, index) => (
@@ -70,10 +70,10 @@ const MagicBanner = () => {
                     </h1>
                   </div>
                 </div>
-                <Link to="/events">
+                <Link to="/categories">
                   <button
                     type="button"
-                    className="mt-14 text-white bg-gradient-to-r bg-primary radient-to-br focus:ring-4 focus:outline-none focus:ring-pink-300 dark:focus:ring-pink-800 font-medium rounded-lg text-lg px-7 py-2 text-center mb-2"
+                    className="mt-14 text-white bg-gradient-to-r bg-primary focus:ring-4 focus:outline-none focus:ring-pink-300 dark:focus:ring-pink-800 font-medium rounded-lg text-lg px-7 py-2 text-center mb-2"
                   >
                     See More
                   </button>
