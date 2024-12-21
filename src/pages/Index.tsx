@@ -12,7 +12,7 @@ import { motion } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
 
 interface Product {
-  id: string;
+  id: string;  // Ensure id is included in the Product interface
   name: string;
   description: string;
   price: number;
@@ -161,6 +161,7 @@ const Index = () => {
                   variants={productAnimation}
                 >
                   <ProductCard
+                    id={product.id}  // Add the id property here
                     title={product.name}
                     description={product.description || ""}
                     image={product.image_url || "/placeholder.svg"}
