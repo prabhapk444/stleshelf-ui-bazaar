@@ -80,8 +80,8 @@ export const Navbar = () => {
             </Link>
             <div className="hidden md:flex items-center space-x-6">
               <Link to="/" className="hover:text-gray-600">Home</Link>
+              <Link to="/shop" className="hover:text-gray-600">Shop</Link>
               <Link to="/about" className="hover:text-gray-600">About</Link>
-              <Link to="/categories" className="hover:text-gray-600">Categories</Link>
               {profile?.role === 'admin' && (
                 <Link to="/admin" className="hover:text-gray-600">Admin</Link>
               )}
@@ -134,11 +134,11 @@ export const Navbar = () => {
               <Link to="/" className="hover:text-gray-600" onClick={() => setIsOpen(false)}>
                 Home
               </Link>
+              <Link to="/shop" className="hover:text-gray-600" onClick={() => setIsOpen(false)}>
+                Shop
+              </Link>
               <Link to="/about" className="hover:text-gray-600" onClick={() => setIsOpen(false)}>
                 About
-              </Link>
-              <Link to="/categories" className="hover:text-gray-600" onClick={() => setIsOpen(false)}>
-                Categories
               </Link>
               {profile?.role === 'admin' && (
                 <Link to="/admin" className="hover:text-gray-600" onClick={() => setIsOpen(false)}>
