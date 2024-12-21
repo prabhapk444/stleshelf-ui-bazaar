@@ -8,6 +8,7 @@ import AuthPage from "./pages/Auth";
 import AdminPage from "./pages/Admin";
 import ShopPage from "./pages/Shop";
 import ProductDetails from "./pages/ProductDetails";
+import About from "./pages/About";
 
 const queryClient = new QueryClient();
 
@@ -23,6 +24,7 @@ const App = () => (
           <Route path="/admin" element={<AdminPage />} />
           <Route path="/shop" element={<ShopPage />} />
           <Route path="/product/:id" element={<ProductDetails />} />
+          <Route path="/about" element={<About />} />
         </Routes>
       </BrowserRouter>
     </TooltipProvider>

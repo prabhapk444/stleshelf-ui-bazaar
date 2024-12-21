@@ -10,9 +10,10 @@ import MagicBanner from "@/components/MagicBanner";
 import Organizer from "@/components/Organizer";
 import { motion } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
+import { Footer } from "@/components/Footer";
 
 interface Product {
-  id: string;  // Ensure id is included in the Product interface
+  id: string;
   name: string;
   description: string;
   price: number;
@@ -93,114 +94,120 @@ const Index = () => {
     : products;
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen flex flex-col">
       <Navbar />
-      <br /><br /><br />
-      <MagicBanner />
-      
-      <section className="pt-32 pb-16 md:pt-40 md:pb-24 container-padding">
-        <div className="container mx-auto text-center">
-          <h1 className="text-4xl md:text-6xl font-bold mb-6 animate-fade-in">
-            Premium UI Components for Modern Developers
-          </h1>
-          <p className="text-xl text-slate-600 mb-8 max-w-2xl mx-auto animate-fade-in">
-            Elevate your projects with our carefully crafted UI components and dashboard templates.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center animate-fade-in-up">
-            <Button size="lg" className="w-full sm:w-auto">
-              Browse Components <ArrowRight className="ml-2" size={20} />
-            </Button>
-            <Button size="lg" variant="outline" className="w-full sm:w-auto">
-              View Pricing
-            </Button>
-          </div>
+      <main className="flex-grow">
+        <div className="pt-16">
+          <MagicBanner />
         </div>
-      </section>
-
-      <Organizer />
-
-      <section className="section-padding bg-slate-50">
-        <div className="container mx-auto">
-          <div className="flex flex-col items-center mb-8">
-            <h2 className="text-3xl font-bold text-center mb-6">Featured Products</h2>
-            <div className="flex gap-2 flex-wrap justify-center">
-              <Button
-                variant={selectedCategory === null ? "default" : "outline"}
-                onClick={() => setSelectedCategory(null)}
-                className="mb-2"
-              >
-                All
+        
+        <section className="pt-32 pb-16 md:pt-40 md:pb-24 relative z-10 bg-white">
+          <div className="container mx-auto text-center">
+            <h1 className="text-4xl md:text-6xl font-bold mb-6 animate-fade-in">
+              Premium UI Components for Modern Developers
+            </h1>
+            <p className="text-xl text-slate-600 mb-8 max-w-2xl mx-auto animate-fade-in">
+              Elevate your projects with our carefully crafted UI components and dashboard templates.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center animate-fade-in-up">
+              <Button size="lg" className="w-full sm:w-auto">
+                Browse Components <ArrowRight className="ml-2" size={20} />
               </Button>
-              {categories.map((category) => (
+              <Button size="lg" variant="outline" className="w-full sm:w-auto">
+                View Pricing
+              </Button>
+            </div>
+          </div>
+        </section>
+
+        <div className="relative z-10 bg-white">
+          <Organizer />
+        </div>
+
+        <section className="section-padding bg-slate-50 relative z-10">
+          <div className="container mx-auto">
+            <div className="flex flex-col items-center mb-8">
+              <h2 className="text-3xl font-bold text-center mb-6">Featured Products</h2>
+              <div className="flex gap-2 flex-wrap justify-center">
                 <Button
-                  key={category.id}
-                  variant={selectedCategory === category.name ? "default" : "outline"}
-                  onClick={() => setSelectedCategory(category.name)}
+                  variant={selectedCategory === null ? "default" : "outline"}
+                  onClick={() => setSelectedCategory(null)}
                   className="mb-2"
                 >
-                  {category.name}
+                  All
                 </Button>
-              ))}
+                {categories.map((category) => (
+                  <Button
+                    key={category.id}
+                    variant={selectedCategory === category.name ? "default" : "outline"}
+                    onClick={() => setSelectedCategory(category.name)}
+                    className="mb-2"
+                  >
+                    {category.name}
+                  </Button>
+                ))}
+              </div>
             </div>
-          </div>
 
-          {productsLoading ? (
+            {productsLoading ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {[1, 2, 3].map((i) => (
+                  <Card key={i} className="h-96 animate-pulse bg-gray-100" />
+                ))}
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {filteredProducts.map((product, index) => (
+                  <motion.div
+                    key={product.id}
+                    custom={index}
+                    initial="hidden"
+                    animate="visible"
+                    variants={productAnimation}
+                  >
+                    <ProductCard
+                      id={product.id}
+                      title={product.name}
+                      description={product.description || ""}
+                      image={product.image_url || "/placeholder.svg"}
+                      price={Number(product.price)}
+                      category={product.category?.name || "Uncategorized"}
+                    />
+                  </motion.div>
+                ))}
+              </div>
+            )}
+          </div>
+        </section>
+
+        <section className="section-padding relative z-10 bg-white">
+          <div className="container mx-auto">
+            <h2 className="text-3xl font-bold text-center mb-12">What Developers Say</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {[1, 2, 3].map((i) => (
-                <Card key={i} className="h-96 animate-pulse bg-gray-100" />
-              ))}
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {filteredProducts.map((product, index) => (
-                <motion.div
-                  key={product.id}
-                  custom={index}
-                  initial="hidden"
-                  animate="visible"
-                  variants={productAnimation}
-                >
-                  <ProductCard
-                    id={product.id}  // Add the id property here
-                    title={product.name}
-                    description={product.description || ""}
-                    image={product.image_url || "/placeholder.svg"}
-                    price={Number(product.price)}
-                    category={product.category?.name || "Uncategorized"}
-                  />
-                </motion.div>
-              ))}
-            </div>
-          )}
-        </div>
-      </section>
-
-      <section className="section-padding">
-        <div className="container mx-auto">
-          <h2 className="text-3xl font-bold text-center mb-12">What Developers Say</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {[1, 2, 3].map((i) => (
-              <Card key={i} className="p-6 glass-card">
-                <div className="flex gap-1 mb-4">
-                  {[1, 2, 3, 4, 5].map((star) => (
-                    <Star key={star} className="fill-yellow-400 text-yellow-400" size={20} />
-                  ))}
-                </div>
-                <p className="text-slate-600 mb-4">
-                  "The quality and attention to detail in these components is outstanding. Saved me weeks of development time!"
-                </p>
-                <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 rounded-full bg-slate-200" />
-                  <div>
-                    <p className="font-semibold">John Doe</p>
-                    <p className="text-sm text-slate-500">Senior Developer</p>
+                <Card key={i} className="p-6 glass-card">
+                  <div className="flex gap-1 mb-4">
+                    {[1, 2, 3, 4, 5].map((star) => (
+                      <Star key={star} className="fill-yellow-400 text-yellow-400" size={20} />
+                    ))}
                   </div>
-                </div>
-              </Card>
-            ))}
+                  <p className="text-slate-600 mb-4">
+                    "The quality and attention to detail in these components is outstanding. Saved me weeks of development time!"
+                  </p>
+                  <div className="flex items-center gap-4">
+                    <div className="w-10 h-10 rounded-full bg-slate-200" />
+                    <div>
+                      <p className="font-semibold">John Doe</p>
+                      <p className="text-sm text-slate-500">Senior Developer</p>
+                    </div>
+                  </div>
+                </Card>
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      </main>
+      <Footer />
     </div>
   );
 };
