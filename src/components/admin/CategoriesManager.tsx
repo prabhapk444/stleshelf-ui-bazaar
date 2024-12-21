@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Modal } from "@/components/ui/modal"; // Import a modal component
+import { Modal } from "@/components/ui/modal"; 
 import {
   Table,
   TableBody,
@@ -127,7 +127,7 @@ export const CategoriesManager = () => {
             setModalOpen(true);
           }}
         >
-          <Plus className="mr-2 h-4 w-4" /> Add Category
+          <Plus className="mr-2 h-4 w-4" /> Add 
         </Button>
       </div>
       <Table>

@@ -2,14 +2,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Modal } from "@/components/ui/modal";
 import { ImagePlus, Loader2 } from "lucide-react";
-import { useState } from "react";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { useRef, useState } from "react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
@@ -38,6 +32,7 @@ export const SubcategoryModal = ({
 }: SubcategoryModalProps) => {
   const [isUploading, setIsUploading] = useState(false);
   const { toast } = useToast();
+  const fileInputRef = useRef<HTMLInputElement | null>(null); // Use ref for the file input
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -45,30 +40,37 @@ export const SubcategoryModal = ({
 
     try {
       setIsUploading(true);
-      const fileExt = file.name.split('.').pop();
-      const filePath = `${crypto.randomUUID()}.${fileExt}`;
 
+      // Generate a random UUID-like string that is compatible with the backend
+      const fileExt = file.name.split(".").pop();
+      const filePath = `${Math.random().toString(36).substring(2, 10)}-${Date.now()}.${fileExt}`;
+
+      // Upload the file to the Supabase storage
       const { error: uploadError } = await supabase.storage
-        .from('subcategory-images')
+        .from("subcategory-images")
         .upload(filePath, file);
 
       if (uploadError) throw uploadError;
 
-      const { data: { publicUrl } } = supabase.storage
-        .from('subcategory-images')
+      // Retrieve the public URL of the uploaded image
+      const { data } = supabase.storage
+        .from("subcategory-images")
         .getPublicUrl(filePath);
 
-      // Update the subcategory with the new image URL
+      const publicUrl = data?.publicUrl;
+      if (!publicUrl) throw new Error("Failed to fetch public URL.");
+
+      // Update the `subcategories` table with the image URL
       const { error: updateError } = await supabase
-        .from('subcategories')
+        .from("subcategories")
         .update({ image_url: publicUrl })
-        .eq('id', currentSubcategory.id);
+        .eq("id", currentSubcategory?.id);
 
       if (updateError) throw updateError;
 
       toast({
         title: "Success",
-        description: "Image uploaded successfully",
+        description: "Image uploaded and URL saved successfully.",
       });
     } catch (error: any) {
       toast({
@@ -88,11 +90,14 @@ export const SubcategoryModal = ({
           {currentSubcategory ? "Edit Subcategory" : "Add Subcategory"}
         </h2>
         <div className="space-y-4">
+          {/* Subcategory Name Input */}
           <Input
             placeholder="Subcategory name"
             value={newSubcategoryName}
             onChange={(e) => setNewSubcategoryName(e.target.value)}
           />
+
+          {/* Category Select Dropdown */}
           <Select
             value={selectedCategoryId}
             onValueChange={setSelectedCategoryId}
@@ -109,45 +114,46 @@ export const SubcategoryModal = ({
             </SelectContent>
           </Select>
 
-          {currentSubcategory && (
-            <div className="space-y-2">
-              {currentSubcategory.image_url && (
-                <img
-                  src={currentSubcategory.image_url}
-                  alt={currentSubcategory.name}
-                  className="w-32 h-32 object-cover rounded"
-                />
-              )}
-              <div className="flex items-center space-x-2">
-                <Input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageUpload}
-                  disabled={isUploading}
-                  className="hidden"
-                  id="image-upload"
-                />
-                <label
-                  htmlFor="image-upload"
-                  className="cursor-pointer inline-flex items-center"
-                >
-                  <Button
-                    type="button"
-                    variant="outline"
-                    disabled={isUploading}
-                  >
-                    {isUploading ? (
-                      <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                    ) : (
-                      <ImagePlus className="h-4 w-4 mr-2" />
-                    )}
-                    {isUploading ? "Uploading..." : "Upload Image"}
-                  </Button>
-                </label>
-              </div>
-            </div>
-          )}
+          {/* Image Upload Section */}
+          <div className="space-y-2">
+            {currentSubcategory?.image_url && (
+              <img
+                src={currentSubcategory.image_url}
+                alt={currentSubcategory.name || "Subcategory Image"}
+                className="w-32 h-32 object-cover rounded"
+              />
+            )}
 
+            {/* Image Input */}
+            <div className="flex flex-col space-y-2">
+              <input
+                ref={fileInputRef} // Use ref for file input
+                type="file"
+                accept="image/*"
+                id="image-upload"
+                onChange={handleImageUpload}
+                disabled={isUploading}
+                className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4
+                           file:rounded file:border-0 file:bg-gray-100 file:text-gray-700
+                           hover:file:bg-gray-200"
+              />
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => fileInputRef.current?.click()} // Trigger file input with ref
+                disabled={isUploading}
+              >
+                {isUploading ? (
+                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                ) : (
+                  <ImagePlus className="h-4 w-4 mr-2" />
+                )}
+                {isUploading ? "Uploading..." : "Upload Image"}
+              </Button>
+            </div>
+          </div>
+
+          {/* Save and Cancel Buttons */}
           <div className="flex justify-end space-x-2">
             <Button variant="outline" onClick={onClose}>
               Cancel

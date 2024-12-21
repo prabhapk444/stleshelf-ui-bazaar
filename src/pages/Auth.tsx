@@ -62,7 +62,7 @@ const AuthPage = () => {
             }
           }}
           theme="light"
-          providers={[]}
+          providers={["google","github"]}
           redirectTo={window.location.origin}
         />
       </div>

@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ProductsManager } from "@/components/admin/ProductsManager";
 import { CategoriesManager } from "@/components/admin/CategoriesManager";
-import { SubcategoriesManager } from "@/components/admin/SubcategoriesManager";
+import { SubcategoriesManager } from "@/components/admin/subcategories/SubcategoriesManager";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
 

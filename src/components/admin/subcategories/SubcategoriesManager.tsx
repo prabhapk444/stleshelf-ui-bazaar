@@ -3,8 +3,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Plus } from "lucide-react";
-import { SubcategoryModal } from "./subcategories/SubcategoryModal";
-import { SubcategoryTable } from "./subcategories/SubcategoryTable";
+import { SubcategoryModal } from "../SubcategoryModal";
+import { SubcategoryTable } from "./SubcategoryTable";
 
 export const SubcategoriesManager = () => {
   const [subcategories, setSubcategories] = useState<any[]>([]);
@@ -153,7 +153,7 @@ export const SubcategoriesManager = () => {
             setModalOpen(true);
           }}
         >
-          <Plus className="mr-2 h-4 w-4" /> Add Subcategory
+          <Plus className="mr-2 h-4 w-4" /> Add
         </Button>
       </div>
 
