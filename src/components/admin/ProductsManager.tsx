@@ -2,17 +2,10 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Modal } from "@/components/ui/modal";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { useToast } from "@/hooks/use-toast";
-import { Pencil, Trash2, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 import { ProductForm } from "./ProductForm";
+import { ProductGrid } from "./ProductGrid";
 
 export const ProductsManager = () => {
   const [products, setProducts] = useState<any[]>([]);
@@ -92,7 +85,11 @@ export const ProductsManager = () => {
       setModalOpen(false);
       fetchData();
     } catch (error: any) {
-      throw error;
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
     }
   };
 
@@ -138,58 +135,14 @@ export const ProductsManager = () => {
         </Button>
       </div>
 
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Image</TableHead>
-            <TableHead>Name</TableHead>
-            <TableHead>Price</TableHead>
-            <TableHead>Category</TableHead>
-            <TableHead>Subcategory</TableHead>
-            <TableHead>Actions</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {products.map((product) => (
-            <TableRow key={product.id}>
-              <TableCell>
-                {product.image_url && (
-                  <img
-                    src={product.image_url}
-                    alt={product.name}
-                    className="w-12 h-12 object-cover rounded"
-                  />
-                )}
-              </TableCell>
-              <TableCell>{product.name}</TableCell>
-              <TableCell>${product.price}</TableCell>
-              <TableCell>{product.categories?.name}</TableCell>
-              <TableCell>{product.subcategories?.name}</TableCell>
-              <TableCell>
-                <div className="flex space-x-2">
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    onClick={() => {
-                      setCurrentProduct(product);
-                      setModalOpen(true);
-                    }}
-                  >
-                    <Pencil className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="destructive"
-                    size="icon"
-                    onClick={() => handleDelete(product.id)}
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                </div>
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+      <ProductGrid
+        products={products}
+        onEdit={(product) => {
+          setCurrentProduct(product);
+          setModalOpen(true);
+        }}
+        onDelete={handleDelete}
+      />
 
       <Modal isOpen={isModalOpen} onClose={() => setModalOpen(false)}>
         <div className="p-4">
