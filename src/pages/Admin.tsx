@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ProductsManager } from "@/components/admin/ProductsManager";
 import { CategoriesManager } from "@/components/admin/CategoriesManager";
+import { SubcategoriesManager } from "@/components/admin/SubcategoriesManager";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
 
@@ -85,6 +86,7 @@ const AdminPage = () => {
         <TabsList className="mb-8">
           <TabsTrigger value="products">Products</TabsTrigger>
           <TabsTrigger value="categories">Categories</TabsTrigger>
+          <TabsTrigger value="subcategories">Subcategories</TabsTrigger>
         </TabsList>
         
         <TabsContent value="products">
@@ -93,6 +95,10 @@ const AdminPage = () => {
         
         <TabsContent value="categories">
           <CategoriesManager />
+        </TabsContent>
+
+        <TabsContent value="subcategories">
+          <SubcategoriesManager />
         </TabsContent>
       </Tabs>
     </div>
