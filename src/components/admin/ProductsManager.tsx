@@ -1,16 +1,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Modal } from "@/components/ui/modal";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import {
   Table,
   TableBody,
@@ -21,6 +12,7 @@ import {
 } from "@/components/ui/table";
 import { useToast } from "@/hooks/use-toast";
 import { Pencil, Trash2, Plus } from "lucide-react";
+import { ProductForm } from "./ProductForm";
 
 export const ProductsManager = () => {
   const [products, setProducts] = useState<any[]>([]);
@@ -29,16 +21,6 @@ export const ProductsManager = () => {
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setModalOpen] = useState(false);
   const [currentProduct, setCurrentProduct] = useState<any>(null);
-  const [formData, setFormData] = useState({
-    name: "",
-    description: "",
-    price: "",
-    image_url: "",
-    category_id: "",
-    subcategory_id: "",
-    discount_percentage: "",
-    coupon_code: "",
-  });
   const { toast } = useToast();
 
   const fetchData = async () => {
@@ -80,46 +62,12 @@ export const ProductsManager = () => {
     fetchData();
   }, []);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleSelectChange = (name: string, value: string) => {
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const resetForm = () => {
-    setFormData({
-      name: "",
-      description: "",
-      price: "",
-      image_url: "",
-      category_id: "",
-      subcategory_id: "",
-      discount_percentage: "",
-      coupon_code: "",
-    });
-    setCurrentProduct(null);
-  };
-
-  const handleSaveProduct = async () => {
+  const handleSaveProduct = async (formData: any) => {
     try {
-      const productData = {
-        name: formData.name,
-        description: formData.description,
-        price: parseFloat(formData.price),
-        image_url: formData.image_url,
-        category_id: formData.category_id || null,
-        subcategory_id: formData.subcategory_id || null,
-        discount_percentage: formData.discount_percentage ? parseFloat(formData.discount_percentage) : null,
-        coupon_code: formData.coupon_code || null,
-      };
-
       if (currentProduct) {
         const { error } = await supabase
           .from("products")
-          .update(productData)
+          .update(formData)
           .eq("id", currentProduct.id);
 
         if (error) throw error;
@@ -131,7 +79,7 @@ export const ProductsManager = () => {
       } else {
         const { error } = await supabase
           .from("products")
-          .insert([productData]);
+          .insert([formData]);
 
         if (error) throw error;
 
@@ -142,14 +90,9 @@ export const ProductsManager = () => {
       }
 
       setModalOpen(false);
-      resetForm();
       fetchData();
     } catch (error: any) {
-      toast({
-        title: "Error",
-        description: error.message,
-        variant: "destructive",
-      });
+      throw error;
     }
   };
 
@@ -177,10 +120,6 @@ export const ProductsManager = () => {
     }
   };
 
-  const filteredSubcategories = subcategories.filter(
-    (sub) => !formData.category_id || sub.category_id === formData.category_id
-  );
-
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -191,7 +130,7 @@ export const ProductsManager = () => {
         <h2 className="text-2xl font-semibold">Products</h2>
         <Button
           onClick={() => {
-            resetForm();
+            setCurrentProduct(null);
             setModalOpen(true);
           }}
         >
@@ -202,6 +141,7 @@ export const ProductsManager = () => {
       <Table>
         <TableHeader>
           <TableRow>
+            <TableHead>Image</TableHead>
             <TableHead>Name</TableHead>
             <TableHead>Price</TableHead>
             <TableHead>Category</TableHead>
@@ -212,6 +152,15 @@ export const ProductsManager = () => {
         <TableBody>
           {products.map((product) => (
             <TableRow key={product.id}>
+              <TableCell>
+                {product.image_url && (
+                  <img
+                    src={product.image_url}
+                    alt={product.name}
+                    className="w-12 h-12 object-cover rounded"
+                  />
+                )}
+              </TableCell>
               <TableCell>{product.name}</TableCell>
               <TableCell>${product.price}</TableCell>
               <TableCell>{product.categories?.name}</TableCell>
@@ -222,16 +171,6 @@ export const ProductsManager = () => {
                     variant="outline"
                     size="icon"
                     onClick={() => {
-                      setFormData({
-                        name: product.name,
-                        description: product.description || "",
-                        price: product.price.toString(),
-                        image_url: product.image_url || "",
-                        category_id: product.category_id || "",
-                        subcategory_id: product.subcategory_id || "",
-                        discount_percentage: product.discount_percentage?.toString() || "",
-                        coupon_code: product.coupon_code || "",
-                      });
                       setCurrentProduct(product);
                       setModalOpen(true);
                     }}
@@ -257,89 +196,13 @@ export const ProductsManager = () => {
           <h2 className="text-xl font-semibold mb-4">
             {currentProduct ? "Edit Product" : "Add Product"}
           </h2>
-          <div className="space-y-4">
-            <Input
-              name="name"
-              placeholder="Product name"
-              value={formData.name}
-              onChange={handleInputChange}
-            />
-            <Textarea
-              name="description"
-              placeholder="Product description"
-              value={formData.description}
-              onChange={handleInputChange}
-            />
-            <Input
-              name="price"
-              type="number"
-              step="0.01"
-              placeholder="Price"
-              value={formData.price}
-              onChange={handleInputChange}
-            />
-            <Input
-              name="image_url"
-              placeholder="Image URL"
-              value={formData.image_url}
-              onChange={handleInputChange}
-            />
-            <Select
-              value={formData.category_id}
-              onValueChange={(value) => {
-                handleSelectChange("category_id", value);
-                handleSelectChange("subcategory_id", "");
-              }}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select a category" />
-              </SelectTrigger>
-              <SelectContent>
-                {categories.map((category) => (
-                  <SelectItem key={category.id} value={category.id}>
-                    {category.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <Select
-              value={formData.subcategory_id}
-              onValueChange={(value) => handleSelectChange("subcategory_id", value)}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select a subcategory" />
-              </SelectTrigger>
-              <SelectContent>
-                {filteredSubcategories.map((subcategory) => (
-                  <SelectItem key={subcategory.id} value={subcategory.id}>
-                    {subcategory.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <Input
-              name="discount_percentage"
-              type="number"
-              step="0.01"
-              placeholder="Discount percentage"
-              value={formData.discount_percentage}
-              onChange={handleInputChange}
-            />
-            <Input
-              name="coupon_code"
-              placeholder="Coupon code"
-              value={formData.coupon_code}
-              onChange={handleInputChange}
-            />
-            <div className="flex justify-end space-x-2">
-              <Button variant="outline" onClick={() => setModalOpen(false)}>
-                Cancel
-              </Button>
-              <Button onClick={handleSaveProduct}>
-                {currentProduct ? "Update" : "Add"}
-              </Button>
-            </div>
-          </div>
+          <ProductForm
+            categories={categories}
+            subcategories={subcategories}
+            initialData={currentProduct}
+            onSave={handleSaveProduct}
+            onCancel={() => setModalOpen(false)}
+          />
         </div>
       </Modal>
     </div>
