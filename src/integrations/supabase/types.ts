@@ -154,18 +154,21 @@ export type Database = {
           category_id: string | null
           created_at: string
           id: string
+          image_url: string | null
           name: string
         }
         Insert: {
           category_id?: string | null
           created_at?: string
           id?: string
+          image_url?: string | null
           name: string
         }
         Update: {
           category_id?: string | null
           created_at?: string
           id?: string
+          image_url?: string | null
           name?: string
         }
         Relationships: [
