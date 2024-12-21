@@ -1,25 +1,10 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Modal } from "@/components/ui/modal";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { useToast } from "@/hooks/use-toast";
-import { Pencil, Trash2, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
+import { SubcategoryModal } from "./subcategories/SubcategoryModal";
+import { SubcategoryTable } from "./subcategories/SubcategoryTable";
 
 export const SubcategoriesManager = () => {
   const [subcategories, setSubcategories] = useState<any[]>([]);
@@ -65,7 +50,14 @@ export const SubcategoriesManager = () => {
   }, []);
 
   const handleSaveSubcategory = async () => {
-    if (!newSubcategoryName.trim() || !selectedCategoryId) return;
+    if (!newSubcategoryName.trim() || !selectedCategoryId) {
+      toast({
+        title: "Error",
+        description: "Please fill in all required fields",
+        variant: "destructive",
+      });
+      return;
+    }
 
     try {
       if (currentSubcategory) {
@@ -105,6 +97,7 @@ export const SubcategoriesManager = () => {
       setModalOpen(false);
       fetchData();
     } catch (error: any) {
+      console.error("Error details:", error);
       toast({
         title: "Error",
         description: error.message,
@@ -137,6 +130,13 @@ export const SubcategoriesManager = () => {
     }
   };
 
+  const handleEdit = (subcategory: any) => {
+    setNewSubcategoryName(subcategory.name);
+    setSelectedCategoryId(subcategory.category_id);
+    setCurrentSubcategory(subcategory);
+    setModalOpen(true);
+  };
+
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -157,84 +157,23 @@ export const SubcategoriesManager = () => {
         </Button>
       </div>
 
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Name</TableHead>
-            <TableHead>Category</TableHead>
-            <TableHead>Actions</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {subcategories.map((subcategory) => (
-            <TableRow key={subcategory.id}>
-              <TableCell>{subcategory.name}</TableCell>
-              <TableCell>{subcategory.categories?.name}</TableCell>
-              <TableCell>
-                <div className="flex space-x-2">
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    onClick={() => {
-                      setNewSubcategoryName(subcategory.name);
-                      setSelectedCategoryId(subcategory.category_id);
-                      setCurrentSubcategory(subcategory);
-                      setModalOpen(true);
-                    }}
-                  >
-                    <Pencil className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="destructive"
-                    size="icon"
-                    onClick={() => handleDelete(subcategory.id)}
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                </div>
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+      <SubcategoryTable
+        subcategories={subcategories}
+        onEdit={handleEdit}
+        onDelete={handleDelete}
+      />
 
-      <Modal isOpen={isModalOpen} onClose={() => setModalOpen(false)}>
-        <div className="p-4">
-          <h2 className="text-xl font-semibold mb-4">
-            {currentSubcategory ? "Edit Subcategory" : "Add Subcategory"}
-          </h2>
-          <div className="space-y-4">
-            <Input
-              placeholder="Subcategory name"
-              value={newSubcategoryName}
-              onChange={(e) => setNewSubcategoryName(e.target.value)}
-            />
-            <Select
-              value={selectedCategoryId}
-              onValueChange={setSelectedCategoryId}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select a category" />
-              </SelectTrigger>
-              <SelectContent>
-                {categories.map((category) => (
-                  <SelectItem key={category.id} value={category.id}>
-                    {category.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <div className="flex justify-end space-x-2">
-              <Button variant="outline" onClick={() => setModalOpen(false)}>
-                Cancel
-              </Button>
-              <Button onClick={handleSaveSubcategory}>
-                {currentSubcategory ? "Update" : "Add"}
-              </Button>
-            </div>
-          </div>
-        </div>
-      </Modal>
+      <SubcategoryModal
+        isOpen={isModalOpen}
+        onClose={() => setModalOpen(false)}
+        newSubcategoryName={newSubcategoryName}
+        setNewSubcategoryName={setNewSubcategoryName}
+        selectedCategoryId={selectedCategoryId}
+        setSelectedCategoryId={setSelectedCategoryId}
+        categories={categories}
+        onSave={handleSaveSubcategory}
+        currentSubcategory={currentSubcategory}
+      />
     </div>
   );
 };
