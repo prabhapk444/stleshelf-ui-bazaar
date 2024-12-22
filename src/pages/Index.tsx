@@ -7,7 +7,6 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import MagicBanner from "@/components/MagicBanner";
-import Organizer from "@/components/Organizer";
 import { motion } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
 import { Footer } from "@/components/Footer";
@@ -120,9 +119,9 @@ const Index = () => {
           </div>
         </section>
 
-        <div className="relative z-10 bg-white">
+        {/* <div className="relative z-10 bg-white">
           <Organizer />
-        </div>
+        </div> */}
 
         <section className="section-padding bg-slate-50 relative z-10">
           <div className="container mx-auto">

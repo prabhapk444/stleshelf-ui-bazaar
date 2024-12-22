@@ -19,6 +19,11 @@ export default {
     },
     extend: {
       colors: {
+        custom:"#E52727",
+        ternary:'#E52727',
+        second: 'black',
+        orange:'#ffad2a',
+        purp:'#BC13FE',
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",

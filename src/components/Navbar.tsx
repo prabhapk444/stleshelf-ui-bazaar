@@ -82,6 +82,7 @@ export const Navbar = () => {
               <Link to="/" className="hover:text-gray-600">Home</Link>
               <Link to="/shop" className="hover:text-gray-600">Shop</Link>
               <Link to="/about" className="hover:text-gray-600">About</Link>
+              <Link to="/services" className="hover:text-gray-600">Services</Link>
               {profile?.role === 'admin' && (
                 <Link to="/admin" className="hover:text-gray-600">Admin</Link>
               )}
