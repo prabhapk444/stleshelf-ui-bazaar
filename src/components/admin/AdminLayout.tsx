@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import { LayoutDashboard, Package, Categories, Tags, CreditCard } from "lucide-react";
+import { LayoutDashboard, Package, Folder, Tags, CreditCard } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useNavigate, useLocation } from "react-router-dom";
 
@@ -15,7 +15,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
   const menuItems = [
     { icon: LayoutDashboard, label: "Overview", hash: "" },
     { icon: Package, label: "Products", hash: "products" },
-    { icon: Categories, label: "Categories", hash: "categories" },
+    { icon: Folder, label: "Categories", hash: "categories" },
     { icon: Tags, label: "Subcategories", hash: "subcategories" },
     { icon: CreditCard, label: "Pricing", hash: "pricing" },
   ];
