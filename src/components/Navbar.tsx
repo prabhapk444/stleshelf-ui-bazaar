@@ -74,7 +74,8 @@ export const Navbar = () => {
     <nav className="fixed w-full z-50 bg-white/80 backdrop-blur-md border-b">
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center h-16">
-          <div className="flex items-center space-x-8">
+          {/* Logo and Desktop Navigation */}
+          <div className="flex-1 flex items-center space-x-8">
             <Link to="/" className="text-xl font-semibold">
               StyleShelf
             </Link>
@@ -89,6 +90,7 @@ export const Navbar = () => {
             </div>
           </div>
 
+          {/* Desktop Cart and Auth */}
           <div className="hidden md:flex items-center space-x-6">
             <Link to="/cart" className="relative flex items-center hover:text-gray-600">
               <ShoppingCart size={24} />
@@ -124,11 +126,16 @@ export const Navbar = () => {
             )}
           </div>
 
-          <button className="md:hidden" onClick={() => setIsOpen(!isOpen)}>
+          {/* Mobile Menu Button - Now on the right */}
+          <button 
+            className="md:hidden p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            onClick={() => setIsOpen(!isOpen)}
+          >
             {isOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
         </div>
 
+        {/* Mobile Menu */}
         {isOpen && (
           <div className="md:hidden absolute top-16 left-0 right-0 bg-white border-b animate-fade-in">
             <div className="flex flex-col space-y-4 p-4">
@@ -141,11 +148,18 @@ export const Navbar = () => {
               <Link to="/about" className="hover:text-gray-600" onClick={() => setIsOpen(false)}>
                 About
               </Link>
+              <Link to="/services" className="hover:text-gray-600" onClick={() => setIsOpen(false)}>
+                Services
+              </Link>
               {profile?.role === 'admin' && (
                 <Link to="/admin" className="hover:text-gray-600" onClick={() => setIsOpen(false)}>
                   Admin Dashboard
                 </Link>
               )}
+              <Link to="/cart" className="hover:text-gray-600 flex items-center" onClick={() => setIsOpen(false)}>
+                <ShoppingCart size={20} className="mr-2" />
+                Cart
+              </Link>
               {profile ? (
                 <Button
                   variant="ghost"
