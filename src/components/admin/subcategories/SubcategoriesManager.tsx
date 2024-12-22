@@ -64,7 +64,6 @@ export const SubcategoriesManager = () => {
       let imageUrl = null;
 
       if (file) {
-        // Upload the file to Supabase Storage
         const fileExt = file.name.split('.').pop();
         const fileName = `${Date.now()}.${fileExt}`;
         
@@ -74,7 +73,6 @@ export const SubcategoriesManager = () => {
 
         if (uploadError) throw uploadError;
 
-        // Get the public URL for the uploaded file
         const { data: { publicUrl } } = supabase.storage
           .from("subcategory-images")
           .getPublicUrl(fileName);

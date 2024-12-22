@@ -1,8 +1,9 @@
 import { ReactNode, useState } from "react";
-import { LayoutDashboard, Package, Folder, Tags, CreditCard, Menu, X } from "lucide-react";
+import { LayoutDashboard, Package, Folder, Tags, CreditCard, Menu, X, LogOut } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { supabase } from "@/integrations/supabase/client";
 
 interface AdminLayoutProps {
   children: ReactNode;
@@ -22,9 +23,17 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
     { icon: CreditCard, label: "Pricing", hash: "pricing" },
   ];
 
+  const handleLogout = async () => {
+    const { error } = await supabase.auth.signOut();
+    if (!error) {
+      navigate("/auth");
+    } else {
+      console.error("Logout failed:", error.message);
+    }
+  };
+
   return (
     <div className="flex min-h-screen bg-slate-50">
-      {/* Mobile Sidebar Toggle */}
       <Button
         variant="ghost"
         size="icon"
@@ -33,16 +42,22 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
       >
         {isSidebarOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
       </Button>
-
-      {/* Sidebar */}
       <div
         className={cn(
           "fixed inset-y-0 left-0 z-40 w-64 transform bg-white shadow-lg transition-transform duration-200 ease-in-out lg:static lg:translate-x-0",
           isSidebarOpen ? "translate-x-0" : "-translate-x-full"
         )}
       >
-        <div className="flex h-16 items-center justify-center border-b">
+        <div className="flex h-16 items-center justify-between border-b px-4">
           <h2 className="text-xl font-bold text-slate-800">Admin Dashboard</h2>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="lg:hidden"
+            onClick={() => setIsSidebarOpen(false)}
+          >
+            <X className="h-5 w-5" />
+          </Button>
         </div>
         <nav className="space-y-1 p-4">
           {menuItems.map((item) => {
@@ -68,9 +83,16 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
             );
           })}
         </nav>
+        <div className="p-4">
+          <button
+            onClick={handleLogout}
+            className="w-full flex items-center space-x-3 px-4 py-3 text-sm font-medium text-red-600 rounded-lg hover:bg-red-50 hover:text-red-800"
+          >
+            <LogOut className="h-5 w-5" />
+            <span>Logout</span>
+          </button>
+        </div>
       </div>
-
-      {/* Main Content */}
       <div className="flex-1 overflow-auto p-4 lg:p-8">
         <div className="mx-auto max-w-7xl">
           {children}

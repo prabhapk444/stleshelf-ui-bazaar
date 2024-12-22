@@ -76,7 +76,7 @@ export const SubcategoryModal: React.FC<SubcategoryModalProps> = ({
             </select>
           </div>
 
-          {/* File input field */}
+      
           <div>
             <label htmlFor="file" className="block text-sm sm:text-base font-medium text-gray-700">
               Upload File

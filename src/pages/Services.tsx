@@ -14,7 +14,7 @@ import { BsShop } from "react-icons/bs";
 const creativewebtemplate = "/CWT1.jpg";
 const advanceui = "/AUI2.jpg";
 const premiumpass = "/pass1.jpg";
-const prodesigner = "/designer2.jpg";
+const prodesigner = "/Designer2.jpg";
 
 
 const AllServices: FC = () => {
