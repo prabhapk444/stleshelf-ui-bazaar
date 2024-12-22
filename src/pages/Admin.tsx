@@ -1,18 +1,20 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ProductsManager } from "@/components/admin/ProductsManager";
 import { CategoriesManager } from "@/components/admin/CategoriesManager";
 import { SubcategoriesManager } from "@/components/admin/subcategories/SubcategoriesManager";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
 import { PricingManager } from "@/components/admin/PricingManager";
+import AdminLayout from "@/components/admin/AdminLayout";
 
 const AdminPage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(true);
+  const hash = location.hash.replace("#", "");
 
   useEffect(() => {
     const checkAdminAccess = async () => {
@@ -79,35 +81,30 @@ const AdminPage = () => {
     );
   }
 
+  const renderContent = () => {
+    switch (hash) {
+      case "products":
+        return <ProductsManager />;
+      case "categories":
+        return <CategoriesManager />;
+      case "subcategories":
+        return <SubcategoriesManager />;
+      case "pricing":
+        return <PricingManager />;
+      default:
+        return (
+          <div className="text-center">
+            <h2 className="text-2xl font-bold mb-4">Welcome to Admin Dashboard</h2>
+            <p className="text-gray-600">Select a section from the sidebar to manage your content.</p>
+          </div>
+        );
+    }
+  };
+
   return (
-    <div className="container mx-auto px-4 py-24">
-      <h1 className="text-3xl font-bold mb-8">Admin Dashboard</h1>
-      
-      <Tabs defaultValue="products" className="w-full">
-        <TabsList className="mb-8">
-          <TabsTrigger value="products">Products</TabsTrigger>
-          <TabsTrigger value="categories">Categories</TabsTrigger>
-          <TabsTrigger value="subcategories">Subcategories</TabsTrigger>
-          <TabsTrigger value="pricing">Pricing</TabsTrigger>
-        </TabsList>
-        
-        <TabsContent value="products">
-          <ProductsManager />
-        </TabsContent>
-        
-        <TabsContent value="categories">
-          <CategoriesManager />
-        </TabsContent>
-
-        <TabsContent value="subcategories">
-          <SubcategoriesManager />
-        </TabsContent>
-
-        <TabsContent value="pricing">
-          <PricingManager/>
-        </TabsContent>
-      </Tabs>
-    </div>
+    <AdminLayout>
+      {renderContent()}
+    </AdminLayout>
   );
 };
 
