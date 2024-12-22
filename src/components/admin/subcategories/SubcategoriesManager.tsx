@@ -14,6 +14,7 @@ export const SubcategoriesManager = () => {
   const [newSubcategoryName, setNewSubcategoryName] = useState("");
   const [selectedCategoryId, setSelectedCategoryId] = useState<string>("");
   const [isModalOpen, setModalOpen] = useState(false);
+  const [file, setFile] = useState<File | null>(null);
   const { toast } = useToast();
 
   const fetchData = async () => {
@@ -60,12 +61,28 @@ export const SubcategoriesManager = () => {
     }
 
     try {
+      let imageUrl = null;
+
+
+if (file) {
+  const { data, error: uploadError } = await supabase.storage
+    .from("subcategory-images")
+    .upload(file.name, file);
+
+  if (uploadError) throw uploadError;
+
+  imageUrl = data?.path ? supabase.storage.from("subcategory-images").getPublicUrl(data.path).publicURL : null;
+}
+
+
+
       if (currentSubcategory) {
         const { error } = await supabase
           .from("subcategories")
           .update({
             name: newSubcategoryName.trim(),
             category_id: selectedCategoryId,
+            image_url: imageUrl,
           })
           .eq("id", currentSubcategory.id);
 
@@ -81,6 +98,7 @@ export const SubcategoriesManager = () => {
           .insert([{
             name: newSubcategoryName.trim(),
             category_id: selectedCategoryId,
+            image_url: imageUrl,
           }]);
 
         if (error) throw error;
@@ -94,6 +112,7 @@ export const SubcategoriesManager = () => {
       setNewSubcategoryName("");
       setSelectedCategoryId("");
       setCurrentSubcategory(null);
+      setFile(null); // Clear the file after saving
       setModalOpen(false);
       fetchData();
     } catch (error: any) {
@@ -173,6 +192,8 @@ export const SubcategoriesManager = () => {
         categories={categories}
         onSave={handleSaveSubcategory}
         currentSubcategory={currentSubcategory}
+        file={file}
+        setFile={setFile}
       />
     </div>
   );

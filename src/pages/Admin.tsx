@@ -7,6 +7,7 @@ import { CategoriesManager } from "@/components/admin/CategoriesManager";
 import { SubcategoriesManager } from "@/components/admin/subcategories/SubcategoriesManager";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
+import { PricingManager } from "@/components/admin/PricingManager";
 
 const AdminPage = () => {
   const navigate = useNavigate();
@@ -87,6 +88,7 @@ const AdminPage = () => {
           <TabsTrigger value="products">Products</TabsTrigger>
           <TabsTrigger value="categories">Categories</TabsTrigger>
           <TabsTrigger value="subcategories">Subcategories</TabsTrigger>
+          <TabsTrigger value="pricing">Pricing</TabsTrigger>
         </TabsList>
         
         <TabsContent value="products">
@@ -99,6 +101,10 @@ const AdminPage = () => {
 
         <TabsContent value="subcategories">
           <SubcategoriesManager />
+        </TabsContent>
+
+        <TabsContent value="pricing">
+          <PricingManager/>
         </TabsContent>
       </Tabs>
     </div>

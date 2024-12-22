@@ -1,25 +1,21 @@
+import { Dialog } from "@headlessui/react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Modal } from "@/components/ui/modal";
-import { ImagePlus, Loader2 } from "lucide-react";
-import { useRef, useState } from "react";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
 
 interface SubcategoryModalProps {
   isOpen: boolean;
   onClose: () => void;
   newSubcategoryName: string;
-  setNewSubcategoryName: (name: string) => void;
+  setNewSubcategoryName: React.Dispatch<React.SetStateAction<string>>;
   selectedCategoryId: string;
-  setSelectedCategoryId: (id: string) => void;
+  setSelectedCategoryId: React.Dispatch<React.SetStateAction<string>>;
   categories: any[];
   onSave: () => void;
   currentSubcategory: any;
+  file: File | null;
+  setFile: React.Dispatch<React.SetStateAction<File | null>>;
 }
 
-export const SubcategoryModal = ({
+export const SubcategoryModal: React.FC<SubcategoryModalProps> = ({
   isOpen,
   onClose,
   newSubcategoryName,
@@ -29,141 +25,84 @@ export const SubcategoryModal = ({
   categories,
   onSave,
   currentSubcategory,
-}: SubcategoryModalProps) => {
-  const [isUploading, setIsUploading] = useState(false);
-  const { toast } = useToast();
-  const fileInputRef = useRef<HTMLInputElement | null>(null); // Use ref for the file input
-
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    try {
-      setIsUploading(true);
-
-      // Generate a random UUID-like string that is compatible with the backend
-      const fileExt = file.name.split(".").pop();
-      const filePath = `${Math.random().toString(36).substring(2, 10)}-${Date.now()}.${fileExt}`;
-
-      // Upload the file to the Supabase storage
-      const { error: uploadError } = await supabase.storage
-        .from("subcategory-images")
-        .upload(filePath, file);
-
-      if (uploadError) throw uploadError;
-
-      // Retrieve the public URL of the uploaded image
-      const { data } = supabase.storage
-        .from("subcategory-images")
-        .getPublicUrl(filePath);
-
-      const publicUrl = data?.publicUrl;
-      if (!publicUrl) throw new Error("Failed to fetch public URL.");
-
-      // Update the `subcategories` table with the image URL
-      const { error: updateError } = await supabase
-        .from("subcategories")
-        .update({ image_url: publicUrl })
-        .eq("id", currentSubcategory?.id);
-
-      if (updateError) throw updateError;
-
-      toast({
-        title: "Success",
-        description: "Image uploaded and URL saved successfully.",
-      });
-    } catch (error: any) {
-      toast({
-        title: "Error",
-        description: error.message,
-        variant: "destructive",
-      });
-    } finally {
-      setIsUploading(false);
+  file,
+  setFile,
+}) => {
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      setFile(e.target.files[0]);
     }
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
-      <div className="p-4">
-        <h2 className="text-xl font-semibold mb-4">
+    <Dialog open={isOpen} onClose={onClose}>
+      <div className="fixed inset-0 bg-black bg-opacity-50 z-50" />
+      <Dialog.Panel className="fixed inset-0 m-auto max-w-xl sm:max-w-lg bg-white rounded-lg shadow-lg p-6 sm:p-8 w-full z-50">
+        <Dialog.Title className="text-2xl sm:text-3xl font-semibold text-gray-800 mb-6">
           {currentSubcategory ? "Edit Subcategory" : "Add Subcategory"}
-        </h2>
-        <div className="space-y-4">
-          {/* Subcategory Name Input */}
-          <Input
-            placeholder="Subcategory name"
-            value={newSubcategoryName}
-            onChange={(e) => setNewSubcategoryName(e.target.value)}
-          />
+        </Dialog.Title>
 
-          {/* Category Select Dropdown */}
-          <Select
-            value={selectedCategoryId}
-            onValueChange={setSelectedCategoryId}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Select a category" />
-            </SelectTrigger>
-            <SelectContent>
-              {categories.map((category) => (
-                <SelectItem key={category.id} value={category.id}>
-                  {category.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-
-          {/* Image Upload Section */}
-          <div className="space-y-2">
-            {currentSubcategory?.image_url && (
-              <img
-                src={currentSubcategory.image_url}
-                alt={currentSubcategory.name || "Subcategory Image"}
-                className="w-32 h-32 object-cover rounded"
-              />
-            )}
-
-            {/* Image Input */}
-            <div className="flex flex-col space-y-2">
-              <input
-                ref={fileInputRef} // Use ref for file input
-                type="file"
-                accept="image/*"
-                id="image-upload"
-                onChange={handleImageUpload}
-                disabled={isUploading}
-                className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4
-                           file:rounded file:border-0 file:bg-gray-100 file:text-gray-700
-                           hover:file:bg-gray-200"
-              />
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => fileInputRef.current?.click()} // Trigger file input with ref
-                disabled={isUploading}
-              >
-                {isUploading ? (
-                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                ) : (
-                  <ImagePlus className="h-4 w-4 mr-2" />
-                )}
-                {isUploading ? "Uploading..." : "Upload Image"}
-              </Button>
-            </div>
+        <div className="space-y-6">
+          <div>
+            <label htmlFor="subcategory-name" className="block text-sm sm:text-base font-medium text-gray-700">
+              Subcategory Name
+            </label>
+            <input
+              id="subcategory-name"
+              type="text"
+              value={newSubcategoryName}
+              onChange={(e) => setNewSubcategoryName(e.target.value)}
+              className="mt-2 p-3 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-200"
+              placeholder="Enter subcategory name"
+            />
           </div>
 
-          {/* Save and Cancel Buttons */}
-          <div className="flex justify-end space-x-2">
-            <Button variant="outline" onClick={onClose}>
-              Cancel
-            </Button>
-            <Button onClick={onSave} disabled={isUploading}>
-              {currentSubcategory ? "Update" : "Add"}
-            </Button>
+          <div>
+            <label htmlFor="category" className="block text-sm sm:text-base font-medium text-gray-700">
+              Category
+            </label>
+            <select
+              id="category"
+              value={selectedCategoryId}
+              onChange={(e) => setSelectedCategoryId(e.target.value)}
+              className="mt-2 p-3 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-200"
+            >
+              <option value="">Select a category</option>
+              {categories.map((category) => (
+                <option key={category.id} value={category.id}>
+                  {category.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* File input field */}
+          <div>
+            <label htmlFor="file" className="block text-sm sm:text-base font-medium text-gray-700">
+              Upload File
+            </label>
+            <input
+              id="file"
+              type="file"
+              onChange={handleFileChange}
+              className="mt-2 p-3 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-200"
+            />
           </div>
         </div>
-      </div>
-    </Modal>
+
+        <div className="mt-8 flex justify-end space-x-4">
+          <Button onClick={onClose} variant="outline" className="px-6 py-2 text-gray-600 hover:bg-gray-100">
+            Cancel
+          </Button>
+          <Button
+            onClick={onSave}
+            disabled={!newSubcategoryName || !selectedCategoryId || !file}
+            className="px-6 py-2 bg-indigo-600 text-white hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-500 disabled:bg-gray-300"
+          >
+            Save
+          </Button>
+        </div>
+      </Dialog.Panel>
+    </Dialog>
   );
 };

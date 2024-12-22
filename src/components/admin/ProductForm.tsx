@@ -34,7 +34,7 @@ export const ProductForm = ({
     image_url: initialData?.image_url || "",
     category_id: initialData?.category_id || "",
     subcategory_id: initialData?.subcategory_id || "",
-    discount_percentage: initialData?.discount_percentage?.toString() || "",
+    discount_percentage: initialData?.discount_percentage?.toString() || "", 
     coupon_code: initialData?.coupon_code || "",
   });
   const [isUploading, setIsUploading] = useState(false);
@@ -74,11 +74,15 @@ export const ProductForm = ({
 
   const handleSubmit = async () => {
     try {
-      await onSave({
+      const dataToSave = {
         ...formData,
         price: parseFloat(formData.price),
-        discount_percentage: formData.discount_percentage ? parseFloat(formData.discount_percentage) : null,
-      });
+        discount_percentage: formData.discount_percentage
+          ? parseFloat(formData.discount_percentage)
+          : null,
+      };
+
+      await onSave(dataToSave);
     } catch (error: any) {
       toast({
         title: "Error",
@@ -133,7 +137,7 @@ export const ProductForm = ({
         value={formData.category_id}
         onValueChange={(value) => {
           handleSelectChange("category_id", value);
-          handleSelectChange("subcategory_id", "");
+          handleSelectChange("subcategory_id", ""); 
         }}
       >
         <SelectTrigger>
@@ -166,13 +170,13 @@ export const ProductForm = ({
         name="discount_percentage"
         type="number"
         step="0.01"
-        placeholder="Discount percentage"
+        placeholder="Discount percentage (optional)"
         value={formData.discount_percentage}
         onChange={handleInputChange}
       />
       <Input
         name="coupon_code"
-        placeholder="Coupon code"
+        placeholder="Coupon code (optional)"
         value={formData.coupon_code}
         onChange={handleInputChange}
       />
