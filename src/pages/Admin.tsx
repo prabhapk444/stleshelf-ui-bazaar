@@ -8,6 +8,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
 import { PricingManager } from "@/components/admin/PricingManager";
 import AdminLayout from "@/components/admin/AdminLayout";
+import Overview from "@/components/admin/Overview";
 
 const AdminPage = () => {
   const navigate = useNavigate();
@@ -92,12 +93,7 @@ const AdminPage = () => {
       case "pricing":
         return <PricingManager />;
       default:
-        return (
-          <div className="text-center">
-            <h2 className="text-2xl font-bold mb-4">Welcome to Admin Dashboard</h2>
-            <p className="text-gray-600">Select a section from the sidebar to manage your content.</p>
-          </div>
-        );
+        return <Overview />;
     }
   };
 
