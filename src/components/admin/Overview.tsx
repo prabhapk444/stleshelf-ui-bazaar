@@ -4,12 +4,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Package, Users, ShoppingCart, Tags, Folder } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 
-interface TableCount {
-  count: number;
-}
+// Define valid table names type
+type TableName = "products" | "categories" | "subcategories" | "cart_items" | "profiles";
 
 const Overview = () => {
-  const fetchTableCount = async (tableName: string) => {
+  const fetchTableCount = async (tableName: TableName) => {
     const { count } = await supabase
       .from(tableName)
       .select('*', { count: 'exact', head: true });
