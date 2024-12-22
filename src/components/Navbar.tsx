@@ -126,6 +126,9 @@ export const Navbar = () => {
               <Link to="/services" className="hover:text-gray-600" onClick={() => setIsOpen(false)}>
                 Services
               </Link>
+              {profile?.role === 'admin' && (
+                <Link to="/admin" className="hover:text-gray-600">Admin</Link>
+              )}
               {profile ? (
                 <Button
                   variant="ghost"
