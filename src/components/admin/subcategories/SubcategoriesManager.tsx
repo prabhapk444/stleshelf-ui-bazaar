@@ -63,27 +63,35 @@ export const SubcategoriesManager = () => {
     try {
       let imageUrl = null;
 
+      if (file) {
+        // Upload the file to Supabase Storage
+        const fileExt = file.name.split('.').pop();
+        const fileName = `${Date.now()}.${fileExt}`;
+        
+        const { data: uploadData, error: uploadError } = await supabase.storage
+          .from("subcategory-images")
+          .upload(fileName, file);
 
-if (file) {
-  const { data, error: uploadError } = await supabase.storage
-    .from("subcategory-images")
-    .upload(file.name, file);
+        if (uploadError) throw uploadError;
 
-  if (uploadError) throw uploadError;
+        // Get the public URL for the uploaded file
+        const { data: { publicUrl } } = supabase.storage
+          .from("subcategory-images")
+          .getPublicUrl(fileName);
 
-  imageUrl = data?.path ? supabase.storage.from("subcategory-images").getPublicUrl(data.path).publicURL : null;
-}
+        imageUrl = publicUrl;
+      }
 
-
+      const subcategoryData = {
+        name: newSubcategoryName.trim(),
+        category_id: selectedCategoryId,
+        image_url: imageUrl,
+      };
 
       if (currentSubcategory) {
         const { error } = await supabase
           .from("subcategories")
-          .update({
-            name: newSubcategoryName.trim(),
-            category_id: selectedCategoryId,
-            image_url: imageUrl,
-          })
+          .update(subcategoryData)
           .eq("id", currentSubcategory.id);
 
         if (error) throw error;
@@ -95,11 +103,7 @@ if (file) {
       } else {
         const { error } = await supabase
           .from("subcategories")
-          .insert([{
-            name: newSubcategoryName.trim(),
-            category_id: selectedCategoryId,
-            image_url: imageUrl,
-          }]);
+          .insert([subcategoryData]);
 
         if (error) throw error;
 
@@ -112,7 +116,7 @@ if (file) {
       setNewSubcategoryName("");
       setSelectedCategoryId("");
       setCurrentSubcategory(null);
-      setFile(null); // Clear the file after saving
+      setFile(null);
       setModalOpen(false);
       fetchData();
     } catch (error: any) {
