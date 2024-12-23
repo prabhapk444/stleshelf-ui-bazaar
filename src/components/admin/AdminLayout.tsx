@@ -71,7 +71,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
                   setIsSidebarOpen(false);
                 }}
                 className={cn(
-                  "w-full flex items-center space-x-3 px-4 py-3 text-sm font-medium rounded-lg transition-colors",
+                  "w-full flex items-center space-x-3 px-4 py-3 text-medium font-medium rounded-lg transition-colors",
                   isActive
                     ? "bg-slate-100 text-slate-900"
                     : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
@@ -86,7 +86,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
         <div className="p-4">
           <button
             onClick={handleLogout}
-            className="w-full flex items-center space-x-3 px-4 py-3 text-sm font-medium text-red-600 rounded-lg hover:bg-red-50 hover:text-red-800"
+            className="w-full flex items-center space-x-3 px-4 py-3 text-medium font-medium text-red-600 rounded-lg hover:bg-red-50 hover:text-red-800"
           >
             <LogOut className="h-5 w-5" />
             <span>Logout</span>
