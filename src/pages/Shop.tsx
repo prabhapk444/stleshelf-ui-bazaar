@@ -1,6 +1,5 @@
 import { Navbar } from "@/components/Navbar";
 import Container from "@/components/Container";
-import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client"; 
 import { Card } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
