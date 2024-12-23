@@ -10,6 +10,7 @@ import { motion } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
 import { Footer } from "@/components/Footer";
 import AllServices from "./Services";
+import { useState } from "react"; // Add this import
 
 interface Product {
   id: string;
