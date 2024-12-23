@@ -2,106 +2,102 @@ import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { Navbar } from "@/components/Navbar";
 import Container from "@/components/Container";
-import { Button } from "@/components/ui/button";
-import { ShoppingCart } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import { ProductCard } from "@/components/ProductCard";
 import { Skeleton } from "@/components/ui/skeleton";
+import { supabase } from "@/integrations/supabase/client";
 
-const fetchProduct = async (id: string) => {
-  const { data, error } = await supabase
-    .from('products')
-    .select(`
-      *,
-      category:categories(name)
-    `)
-    .eq('id', id)
-    .single();
-  
-  if (error) throw error;
-  return data;
-};
+interface Product {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  image_url: string | null;
+  discount_percentage: number;
+  category: {
+    name: string;
+  } | null;
+}
 
 const ProductDetails = () => {
-  const { id } = useParams();
-  const { data: product, isLoading } = useQuery({
-    queryKey: ['product', id],
-    queryFn: () => fetchProduct(id!),
-    enabled: !!id,
+  const { subcategoryId } = useParams();
+
+  const { data: products, isLoading } = useQuery({
+    queryKey: ['products', subcategoryId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('products')
+        .select(`
+          *,
+          category:categories(name)
+        `)
+        .eq('subcategory_id', subcategoryId);
+
+      if (error) throw error;
+      return data as Product[];
+    },
+    enabled: !!subcategoryId,
   });
 
-  if (isLoading) {
-    return (
-      <div>
-        <Navbar />
-        <Container>
-          <div className="pt-24 grid grid-cols-1 md:grid-cols-2 gap-8">
-            <Skeleton className="h-[500px] w-full" />
-            <div className="space-y-4">
-              <Skeleton className="h-12 w-3/4" />
-              <Skeleton className="h-6 w-1/4" />
-              <Skeleton className="h-32 w-full" />
-              <Skeleton className="h-12 w-48" />
-            </div>
-          </div>
-        </Container>
-      </div>
-    );
-  }
+  const { data: subcategory } = useQuery({
+    queryKey: ['subcategory', subcategoryId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('subcategories')
+        .select(`
+          *,
+          category:categories(name)
+        `)
+        .eq('id', subcategoryId)
+        .single();
 
-  if (!product) {
-    return (
-      <div>
-        <Navbar />
-        <Container>
-          <div className="pt-24">
-            <h1 className="text-2xl">Product not found</h1>
-          </div>
-        </Container>
-      </div>
-    );
-  }
-
-  const discountedPrice = product.discount_percentage
-    ? product.price * (1 - product.discount_percentage / 100)
-    : product.price;
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!subcategoryId,
+  });
 
   return (
-    <div>
+    <div className="min-h-screen bg-gray-50">
       <Navbar />
       <Container>
-        <div className="pt-24 grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div className="aspect-square relative overflow-hidden rounded-lg">
-            <img
-              src={product.image_url || "/placeholder.svg"}
-              alt={product.name}
-              className="object-cover w-full h-full"
-            />
-          </div>
-          <div className="space-y-6">
-            <h1 className="text-4xl font-bold">{product.name}</h1>
-            {product.discount_percentage ? (
-              <div className="space-y-1">
-                <p className="text-3xl font-bold text-primary">
-                  ₹{discountedPrice}
-                </p>
-                <p className="text-xl text-gray-500 line-through">
-                  ₹{product.price}
-                </p>
-                <p className="text-sm text-green-600">
-                  Save {product.discount_percentage}%
-                </p>
-              </div>
-            ) : (
-              <p className="text-3xl font-bold">₹{product.price}</p>
+        <div className="pt-24 pb-16">
+          <div className="mb-8">
+            <h1 className="text-4xl font-bold text-center">
+              {subcategory?.name || 'Products'}
+            </h1>
+            {subcategory?.category?.name && (
+              <p className="text-center text-gray-600 mt-2">
+                {subcategory.category.name}
+              </p>
             )}
-            <p className="text-gray-600">{product.description}</p>
-            <div className="space-y-4">
-              <Button size="lg" className="w-full md:w-auto">
-                <ShoppingCart className="mr-2 h-5 w-5" />
-                Add to Cart
-              </Button>
-            </div>
           </div>
+
+          {isLoading ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {[1, 2, 3].map((i) => (
+                <Skeleton key={i} className="h-[400px] w-full" />
+              ))}
+            </div>
+          ) : products && products.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {products.map((product) => (
+                <ProductCard
+                  key={product.id}
+                  id={product.id}
+                  title={product.name}
+                  description={product.description || ""}
+                  image={product.image_url || "/placeholder.svg"}
+                  price={Number(product.price)}
+                  category={product.category?.name || "Uncategorized"}
+                  discount={product.discount_percentage || 0}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="text-center text-gray-500">
+              No products found in this category.
+            </div>
+          )}
         </div>
       </Container>
     </div>
