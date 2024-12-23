@@ -71,12 +71,10 @@ const ShopPage = () => {
                         No Image Available
                       </div>
                     )}
-                    <div className="absolute inset-0 bg-black/40 flex flex-col justify-end p-4">
-                      <h3 className="text-white text-xl font-semibold">{subcategory.name}</h3>
-                      {subcategory.category && (
-                        <p className="text-white/80 text-sm">{subcategory.category.name}</p>
-                      )}
-                    </div>
+                    <div className="absolute inset-0 bg-black bg-opacity-20 flex flex-col justify-end p-6">
+  <h3 className="text-white text-2xl font-semibold shadow-md">{subcategory.name}</h3>
+</div>
+
                   </div>
                 </Card>
               ))}
