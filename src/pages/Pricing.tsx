@@ -80,7 +80,7 @@ const Pricing = () => {
                   type="button"
                   className="w-full mt-6 py-2 text-white bg-blue-600 hover:bg-blue-700 rounded-lg font-medium text-lg focus:ring-4 focus:ring-blue-300 focus:outline-none"
                 >
-                  Get Started
+                  Get Pacakage
                 </button>
               </div>
             ))}

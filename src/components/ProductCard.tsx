@@ -50,26 +50,26 @@ export const ProductCard = ({
           <p className="text-slate-600 mb-4 line-clamp-2">{description}</p>
           <div className="flex flex-col gap-4">
             <div className="flex justify-between items-center">
-              {discount > 0 ? (
+              {/* {discount > 0 ? (
                 <div>
                   <span className="text-2xl font-bold text-primary">
-                    ₹{discountedPrice.toFixed(2)}
+                    ₹{discountedPrice}
                   </span>
                   <span className="ml-2 text-sm text-gray-500 line-through">
-                    ₹{price.toFixed(2)}
+                    ₹{price}
                   </span>
                 </div>
               ) : (
-                <span className="text-2xl font-bold">₹{price.toFixed(2)}</span>
-              )}
-              <Button 
+                <span className="text-2xl font-bold">₹{price}</span>
+              )} */}
+              {/* <Button 
                 size="sm" 
                 variant="outline"
                 onClick={() => navigate('/library')}
               >
                 <Library size={18} className="mr-2" />
                 My Library
-              </Button>
+              </Button> */}
             </div>
             <Button
               variant="secondary"

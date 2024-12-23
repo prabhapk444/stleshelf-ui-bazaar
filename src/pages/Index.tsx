@@ -10,7 +10,7 @@ import { motion } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
 import { Footer } from "@/components/Footer";
 import AllServices from "./Services";
-import { useState } from "react"; // Add this import
+import { useState } from "react"; 
 
 interface Product {
   id: string;
@@ -71,7 +71,7 @@ const Index = () => {
     queryFn: fetchCategories,
   });
 
-  // Removed the authentication check and redirect
+
 
   const filteredProducts = selectedCategory
     ? products.filter(product => product.category?.name === selectedCategory)
@@ -97,8 +97,8 @@ const Index = () => {
               <Button size="lg" className="w-full sm:w-auto" onClick={()=> navigate("/shop")}>
                 Browse Components <ArrowRight className="ml-2" size={20}/>
               </Button>
-              <Button size="lg" variant="outline" className="w-full sm:w-auto" onClick={()=> navigate("/pricing")}>
-                View Pricing
+              <Button size="lg" variant="outline" className="w-full sm:w-auto" onClick={()=> navigate("/library")}>
+                View Library
               </Button>
             </div>
           </div>
