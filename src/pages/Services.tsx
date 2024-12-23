@@ -7,8 +7,6 @@ import { FaCartShopping, FaPeopleGroup, FaPeopleLine } from "react-icons/fa6";
 import { BsShop } from "react-icons/bs";
 import { Link } from "react-router-dom";
 import Container from "../components/Container";
-import { Navbar } from "@/components/Navbar";
-import { Footer } from "@/components/Footer";
 
 const creativewebtemplate = "/CWT1.jpg";
 const advanceui = "/AUI2.jpg";
@@ -82,7 +80,6 @@ const serviceCards = [
 const AllServices: FC = () => {
   return (
     <>
-      <Navbar />
       <Container><br /><br />
         <h3 className="mt-8 mb-5 text-center uppercase text-second font-extrabold text-3xl">
           Our Services
@@ -93,7 +90,6 @@ const AllServices: FC = () => {
           ))}
         </div>
       </Container>
-      <Footer />
     </>
   );
 };

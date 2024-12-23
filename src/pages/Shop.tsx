@@ -42,7 +42,7 @@ const ShopPage = () => {
       <Navbar />
       <Container>
         <div className="pt-24 pb-16">
-          <h1 className="text-4xl font-bold mb-8 text-center">Shop by Category</h1>
+          <h1 className="text-4xl font-bold mb-8 text-center">Subcategory</h1>
 
           {isLoading ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">

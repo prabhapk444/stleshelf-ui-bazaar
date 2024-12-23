@@ -77,7 +77,6 @@ export const Navbar = () => {
               <Link to="/shop" className="hover:text-gray-600">Shop</Link>
               <Link to="/about" className="hover:text-gray-600">About</Link>
                <Link to="/pricing" className="hover:text-gray-600">Pricing</Link>
-              <Link to="/services" className="hover:text-gray-600">Services</Link>
               {profile?.role === 'admin' && (
                 <Link to="/admin" className="hover:text-gray-600">Admin</Link>
               )}
@@ -120,9 +119,6 @@ export const Navbar = () => {
               </Link>
               <Link to="/about" className="hover:text-gray-600" onClick={() => setIsOpen(false)}>
                 About
-              </Link>
-              <Link to="/services" className="hover:text-gray-600" onClick={() => setIsOpen(false)}>
-                Services
               </Link>
               {profile?.role === 'admin' && (
                 <Link to="/admin" className="hover:text-gray-600">Admin</Link>

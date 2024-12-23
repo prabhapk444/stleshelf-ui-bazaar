@@ -10,6 +10,8 @@ import MagicBanner from "@/components/MagicBanner";
 import { motion } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
 import { Footer } from "@/components/Footer";
+import AllServices from "./Services";
+
 
 interface Product {
   id: string;
@@ -109,20 +111,15 @@ const Index = () => {
               Elevate your projects with our carefully crafted UI components and dashboard templates.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center animate-fade-in-up">
-              <Button size="lg" className="w-full sm:w-auto">
-                Browse Components <ArrowRight className="ml-2" size={20} />
+              <Button size="lg" className="w-full sm:w-auto" onClick={()=> navigate("/shop")}>
+                Browse Components <ArrowRight className="ml-2" size={20}/>
               </Button>
-              <Button size="lg" variant="outline" className="w-full sm:w-auto">
+              <Button size="lg" variant="outline" className="w-full sm:w-auto" onClick={()=> navigate("/pricing")}>
                 View Pricing
               </Button>
             </div>
           </div>
         </section>
-
-        {/* <div className="relative z-10 bg-white">
-          <Organizer />
-        </div> */}
-
         <section className="section-padding bg-slate-50 relative z-10">
           <div className="container mx-auto">
             <div className="flex flex-col items-center mb-8">
@@ -178,10 +175,11 @@ const Index = () => {
             )}
           </div>
         </section>
+        <AllServices/>
 
         <section className="section-padding relative z-10 bg-white">
           <div className="container mx-auto">
-            <h2 className="text-3xl font-bold text-center mb-12">What Developers Say</h2>
+            <h2 className="text-3xl font-bold text-center mb-12">What Customers Say</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {[1, 2, 3].map((i) => (
                 <Card key={i} className="p-6 glass-card">
