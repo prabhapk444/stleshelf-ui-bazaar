@@ -3,7 +3,6 @@ import { ProductCard } from "@/components/ProductCard";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ArrowRight, Star } from "lucide-react";
-import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import MagicBanner from "@/components/MagicBanner";
@@ -11,7 +10,6 @@ import { motion } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
 import { Footer } from "@/components/Footer";
 import AllServices from "./Services";
-
 
 interface Product {
   id: string;
@@ -72,23 +70,7 @@ const Index = () => {
     queryFn: fetchCategories,
   });
 
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (!session) {
-        navigate("/auth");
-      }
-    });
-    
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((event, session) => {
-      if (!session) {
-        navigate("/auth");
-      }
-    });
-
-    return () => subscription.unsubscribe();
-  }, [navigate]);
+  // Removed the authentication check and redirect
 
   const filteredProducts = selectedCategory
     ? products.filter(product => product.category?.name === selectedCategory)
