@@ -1,7 +1,7 @@
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ShoppingCart, ArrowRight } from "lucide-react";
+import { Library, ArrowRight } from "lucide-react";
 import { useState } from "react";
 import { ProductModal } from "./ProductModal";
 
@@ -61,8 +61,8 @@ export const ProductCard = ({
                 <span className="text-2xl font-bold">₹{price.toFixed(2)}</span>
               )}
               <Button size="sm" variant="outline">
-                <ShoppingCart size={18} className="mr-2" />
-                Add to Cart
+                <Library size={18} className="mr-2" />
+                My Library
               </Button>
             </div>
             <Button

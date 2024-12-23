@@ -6,7 +6,7 @@ import {
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ShoppingCart } from "lucide-react";
+import { Library } from "lucide-react";
 
 interface ProductModalProps {
   isOpen: boolean;
@@ -71,8 +71,8 @@ export const ProductModal = ({ isOpen, onClose, product }: ProductModalProps) =>
                 )}
               </div>
               <Button className="w-full sm:w-auto" size="lg">
-                <ShoppingCart className="mr-2 h-5 w-5" />
-                Add to Cart
+                <Library className="mr-2 h-5 w-5" />
+                Add to My Library
               </Button>
             </div>
           </div>
