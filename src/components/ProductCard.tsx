@@ -3,6 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Library, ArrowRight } from "lucide-react";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { ProductModal } from "./ProductModal";
 
 interface ProductCardProps {
@@ -25,6 +26,7 @@ export const ProductCard = ({
   discount = 0,
 }: ProductCardProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const navigate = useNavigate();
   const discountedPrice = discount ? price * (1 - discount / 100) : price;
 
   return (
@@ -60,7 +62,11 @@ export const ProductCard = ({
               ) : (
                 <span className="text-2xl font-bold">₹{price.toFixed(2)}</span>
               )}
-              <Button size="sm" variant="outline">
+              <Button 
+                size="sm" 
+                variant="outline"
+                onClick={() => navigate('/library')}
+              >
                 <Library size={18} className="mr-2" />
                 My Library
               </Button>
