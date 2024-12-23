@@ -1,14 +1,8 @@
-import { ShoppingCart, Menu, X, LogOut, LogIn } from "lucide-react"; 
+import { Menu, X, LogOut, LogIn } from "lucide-react"; 
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { Link } from "react-router-dom";
 
 export const Navbar = () => {
@@ -82,6 +76,7 @@ export const Navbar = () => {
               <Link to="/" className="hover:text-gray-600">Home</Link>
               <Link to="/shop" className="hover:text-gray-600">Shop</Link>
               <Link to="/about" className="hover:text-gray-600">About</Link>
+               <Link to="/pricing" className="hover:text-gray-600">Pricing</Link>
               <Link to="/services" className="hover:text-gray-600">Services</Link>
               {profile?.role === 'admin' && (
                 <Link to="/admin" className="hover:text-gray-600">Admin</Link>
@@ -119,6 +114,9 @@ export const Navbar = () => {
               </Link>
               <Link to="/shop" className="hover:text-gray-600" onClick={() => setIsOpen(false)}>
                 Shop
+              </Link>
+               <Link to="/pricing" className="hover:text-gray-600" onClick={() => setIsOpen(false)}>
+               Pricing
               </Link>
               <Link to="/about" className="hover:text-gray-600" onClick={() => setIsOpen(false)}>
                 About

@@ -82,17 +82,17 @@ const ProductDetails = () => {
             {product.discount_percentage ? (
               <div className="space-y-1">
                 <p className="text-3xl font-bold text-primary">
-                  ${discountedPrice.toFixed(2)}
+                  ₹{discountedPrice}
                 </p>
                 <p className="text-xl text-gray-500 line-through">
-                  ${product.price.toFixed(2)}
+                  ₹{product.price}
                 </p>
                 <p className="text-sm text-green-600">
                   Save {product.discount_percentage}%
                 </p>
               </div>
             ) : (
-              <p className="text-3xl font-bold">${product.price.toFixed(2)}</p>
+              <p className="text-3xl font-bold">₹{product.price}</p>
             )}
             <p className="text-gray-600">{product.description}</p>
             <div className="space-y-4">

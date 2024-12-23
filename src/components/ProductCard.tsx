@@ -48,21 +48,21 @@ export const ProductCard = ({
             {discount > 0 ? (
               <div>
                 <span className="text-2xl font-bold text-primary">
-                  ${discountedPrice.toFixed(2)}
+                  ₹{discountedPrice}
                 </span>
                 <span className="ml-2 text-sm text-gray-500 line-through">
-                  ${price.toFixed(2)}
+                  ₹{price}
                 </span>
               </div>
             ) : (
-              <span className="text-2xl font-bold">${price.toFixed(2)}</span>
+              <span className="text-2xl font-bold">₹{price}</span>
             )}
             <Button size="sm" variant="outline">
               <ShoppingCart size={18} className="mr-2" />
               Add to Cart
             </Button>
           </div>
-          <Link to={`/product/${id}`}>
+          <Link to={`/product/₹{id}`}>
             <Button variant="secondary" className="w-full">
               Read More
               <ArrowRight size={18} className="ml-2" />

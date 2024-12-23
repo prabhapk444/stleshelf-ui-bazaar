@@ -2,10 +2,12 @@ import { Navbar } from "@/components/Navbar";
 import Container from "@/components/Container";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client"; 
-import { Card } from "@/components/ui/card"; 
+import { Card } from "@/components/ui/card";
+import { useNavigate } from "react-router-dom"; 
 
 const ShopPage = () => {
   const [subcategories, setSubcategories] = useState<any[]>([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchSubcategories = async () => {
@@ -27,6 +29,10 @@ const ShopPage = () => {
     fetchSubcategories();
   }, []);
 
+  const handleClick = (subcategoryId: number) => {
+    navigate(`/products/${subcategoryId}`);
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar />
@@ -38,7 +44,8 @@ const ShopPage = () => {
             {subcategories.map((subcategory) => (
               <Card
                 key={subcategory.id}
-                className="group rounded-lg overflow-hidden border border-slate-200 shadow-lg transition-all transform hover:scale-105"
+                className="group rounded-lg overflow-hidden border border-slate-200 shadow-lg transition-all transform hover:scale-105 cursor-pointer"
+                onClick={() => handleClick(subcategory.id)} 
               >
                 <div className="relative">
                   {subcategory.image_url ? (
