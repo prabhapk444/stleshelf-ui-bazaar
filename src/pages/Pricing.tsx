@@ -88,10 +88,10 @@ const Pricing = () => {
 
       // Initialize Razorpay payment
       const options = {
-        key: "rzp_test_51KxD6F7yZVE8Zj",  // Replace with your Razorpay key ID
+        key: "rzp_live_tkguofZ2ybrx3B",  // Replace with your Razorpay key ID
         amount: amount,
         currency: currency,
-        name: "Your Company Name",
+        name: "StyleShelf",
         description: pricing.package_name,
         order_id: orderId,
         handler: async function (response: any) {
