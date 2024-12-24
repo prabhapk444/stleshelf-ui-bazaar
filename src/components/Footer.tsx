@@ -65,15 +65,15 @@ export const Footer = () => {
             <ul className="space-y-2">
               <li className="flex items-center space-x-2 text-gray-600">
                 <MapPin size={16} />
-                <span>123 Fashion St, NY 10001</span>
+                <span>9/527 5.B Gandhinagar, Reserveline, sivakasi</span>
               </li>
               <li className="flex items-center space-x-2 text-gray-600">
                 <Phone size={16} />
-                <span>+1 234 567 8900</span>
+                <span>+91 9047560048</span>
               </li>
               <li className="flex items-center space-x-2 text-gray-600">
                 <Mail size={16} />
-                <span>contact@styleshelf.com</span>
+                <span>styleshelfv@gmail.com</span>
               </li>
             </ul>
           </div>
