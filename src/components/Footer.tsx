@@ -64,15 +64,15 @@ export const Footer = () => {
             <h3 className="text-lg font-semibold mb-4">Contact</h3>
             <ul className="space-y-2">
               <li className="flex items-center space-x-2 text-gray-600">
-                <MapPin size={16} />
+                <MapPin size={18} />
                 <span>9/527 5.B Gandhinagar, Reserveline, sivakasi</span>
               </li>
               <li className="flex items-center space-x-2 text-gray-600">
-                <Phone size={16} />
+                <Phone size={18} />
                 <span>+91 9047560048</span>
               </li>
               <li className="flex items-center space-x-2 text-gray-600">
-                <Mail size={16} />
+                <Mail size={18} />
                 <span>styleshelfv@gmail.com</span>
               </li>
             </ul>
