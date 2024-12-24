@@ -80,7 +80,7 @@ export const Footer = () => {
         </div>
         <div className="mt-8 border-t pt-8">
           <p className="text-center text-gray-500">
-            © {new Date().getFullYear()} StyleShelf. All rights reserved.
+            © {new Date().getFullYear()} StyleShelf All rights reserved.
           </p>
         </div>
       </div>
