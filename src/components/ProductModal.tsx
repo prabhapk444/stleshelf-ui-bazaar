@@ -8,7 +8,9 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Library } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { useToast } from "@/hooks/use-toast"; 
+import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
+import { useState, useEffect } from "react";
 
 interface ProductModalProps {
   isOpen: boolean;
@@ -22,34 +24,112 @@ interface ProductModalProps {
     category: string;
     discount?: number;
   };
-  isLoggedIn: boolean; 
 }
 
 export const ProductModal = ({
   isOpen,
   onClose,
   product,
-  isLoggedIn,
 }: ProductModalProps) => {
   const navigate = useNavigate();
-  const toast = useToast();
+  const { toast } = useToast();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isInLibrary, setIsInLibrary] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleAddToLibrary = () => {
+  useEffect(() => {
+    const checkAuth = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      setIsLoggedIn(!!session);
+      
+      if (session) {
+        const { data: cartItems } = await supabase
+          .from('cart_items')
+          .select('*')
+          .eq('user_id', session.user.id)
+          .eq('product_id', product.id)
+          .single();
+        
+        setIsInLibrary(!!cartItems);
+      }
+    };
+    
+    checkAuth();
+  }, [product.id]);
+
+  const handleAddToLibrary = async () => {
     if (!isLoggedIn) {
-      toast.toast({
+      toast({
         title: "Authentication Required",
         description: "Please log in to add this product to your library.",
       });
       navigate("/auth");
       return;
     }
-  
-    toast.toast({
-      title: "Added to Library",
-      description: `${product.title} has been added to your library.`,
-    });
+
+    setIsLoading(true);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return;
+
+      const { error } = await supabase
+        .from('cart_items')
+        .insert([
+          {
+            user_id: session.user.id,
+            product_id: product.id,
+          }
+        ]);
+
+      if (error) throw error;
+
+      setIsInLibrary(true);
+      toast({
+        title: "Added to Library",
+        description: `${product.title} has been added to your library.`,
+      });
+    } catch (error) {
+      console.error('Error adding to library:', error);
+      toast({
+        title: "Error",
+        description: "Failed to add to library. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
-  
+
+  const handleRemoveFromLibrary = async () => {
+    setIsLoading(true);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return;
+
+      const { error } = await supabase
+        .from('cart_items')
+        .delete()
+        .eq('user_id', session.user.id)
+        .eq('product_id', product.id);
+
+      if (error) throw error;
+
+      setIsInLibrary(false);
+      toast({
+        title: "Removed from Library",
+        description: `${product.title} has been removed from your library.`,
+      });
+    } catch (error) {
+      console.error('Error removing from library:', error);
+      toast({
+        title: "Error",
+        description: "Failed to remove from library. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const discountedPrice = product.discount
     ? product.price * (1 - product.discount / 100)
@@ -101,10 +181,11 @@ export const ProductModal = ({
               <Button
                 className="w-full sm:w-auto"
                 size="lg"
-                onClick={handleAddToLibrary}
+                onClick={isInLibrary ? handleRemoveFromLibrary : handleAddToLibrary}
+                disabled={isLoading}
               >
                 <Library className="mr-2 h-5 w-5" />
-                Add to My Library
+                {isInLibrary ? "Remove from Library" : "Add to My Library"}
               </Button>
             </div>
           </div>
