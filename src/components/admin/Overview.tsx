@@ -1,10 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Package, Users, ShoppingCart, Tags, Folder, IndianRupee } from "lucide-react"; 
+import { Package, Users, ShoppingCart, Tags, Folder, IndianRupee, MessageSquare, ThumbsUp, ClipboardList } from "lucide-react"; 
 import { Skeleton } from "@/components/ui/skeleton";
 
-type TableName = "products" | "categories" | "subcategories" | "cart_items" | "profiles" | "pricing";
+type TableName = "products" | "categories" | "subcategories" | "cart_items" | "profiles" | "pricing" | "contact_messages" | "feedback" | "orders";
 
 const Overview = () => {
   const fetchTableCount = async (tableName: TableName) => {
@@ -42,6 +42,21 @@ const Overview = () => {
   const { data: pricingCount = 0, isLoading: loadingPricing } = useQuery({
     queryKey: ["pricing-count"],
     queryFn: () => fetchTableCount("pricing"),
+  });
+
+  const { data: messagesCount = 0, isLoading: loadingMessages } = useQuery({
+    queryKey: ["contact-messages-count"],
+    queryFn: () => fetchTableCount("contact_messages"),
+  });
+
+  const { data: feedbackCount = 0, isLoading: loadingFeedback } = useQuery({
+    queryKey: ["feedback-count"],
+    queryFn: () => fetchTableCount("feedback"),
+  });
+
+  const { data: ordersCount = 0, isLoading: loadingOrders } = useQuery({
+    queryKey: ["orders-count"],
+    queryFn: () => fetchTableCount("orders"),
   });
 
   const stats = [
@@ -88,12 +103,35 @@ const Overview = () => {
     {
       title: "Pricing Plans",
       value: pricingCount,
-      icon: IndianRupee, 
+      icon: IndianRupee,
       loading: loadingPricing,
       color: "text-yellow-600",
       bgColor: "bg-yellow-100",
     },
-    
+    {
+      title: "Contact Messages",
+      value: messagesCount,
+      icon: MessageSquare,
+      loading: loadingMessages,
+      color: "text-cyan-600",
+      bgColor: "bg-cyan-100",
+    },
+    {
+      title: "Feedback Received",
+      value: feedbackCount,
+      icon: ThumbsUp,
+      loading: loadingFeedback,
+      color: "text-teal-600",
+      bgColor: "bg-teal-100",
+    },
+    {
+      title: "Orders",
+      value: ordersCount,
+      icon: ClipboardList,
+      loading: loadingOrders,
+      color: "text-red-600",
+      bgColor: "bg-red-100",
+    },
   ];
 
   return (

@@ -11,6 +11,7 @@ declare global {
   }
 }
 
+
 interface Pricing {
   created_at: string | null;
   discount: number | null;
@@ -73,7 +74,7 @@ const Pricing = () => {
 
       const { data: { user } } = await supabase.auth.getUser();
       
-      // Create order
+   
       const response = await supabase.functions.invoke('create-order', {
         body: {
           amount: parseFloat(pricing.package_price),
@@ -85,7 +86,7 @@ const Pricing = () => {
       if (response.error) throw new Error(response.error.message);
       const { orderId, amount, currency } = response.data;
 
-      // Initialize Razorpay payment
+
       const options = {
         key: "rzp_live_tkguofZ2ybrx3B",
         amount: amount,
@@ -95,7 +96,6 @@ const Pricing = () => {
         order_id: orderId,
         handler: async function (response: any) {
           try {
-            // Update order status
             await supabase
               .from('orders')
               .update({ 
@@ -104,7 +104,6 @@ const Pricing = () => {
               })
               .eq('payment_id', orderId);
 
-            // Send confirmation email
             const emailResponse = await supabase.functions.invoke('send-payment-email', {
               body: {
                 to: user?.email,
