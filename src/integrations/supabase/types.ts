@@ -107,6 +107,47 @@ export type Database = {
         }
         Relationships: []
       }
+      orders: {
+        Row: {
+          amount: number
+          created_at: string | null
+          id: string
+          order_status: string | null
+          package_id: string | null
+          payment_id: string | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          amount: number
+          created_at?: string | null
+          id?: string
+          order_status?: string | null
+          package_id?: string | null
+          payment_id?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          amount?: number
+          created_at?: string | null
+          id?: string
+          order_status?: string | null
+          package_id?: string | null
+          payment_id?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "orders_package_id_fkey"
+            columns: ["package_id"]
+            isOneToOne: false
+            referencedRelation: "pricing"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       pricing: {
         Row: {
           created_at: string | null
