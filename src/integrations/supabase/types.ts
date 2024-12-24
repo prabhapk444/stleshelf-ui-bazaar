@@ -14,24 +14,18 @@ export type Database = {
           created_at: string
           id: string
           product_id: string
-          quantity: number
-          status: Database["public"]["Enums"]["cart_item_status"]
           user_id: string
         }
         Insert: {
           created_at?: string
           id?: string
           product_id: string
-          quantity?: number
-          status?: Database["public"]["Enums"]["cart_item_status"]
           user_id: string
         }
         Update: {
           created_at?: string
           id?: string
           product_id?: string
-          quantity?: number
-          status?: Database["public"]["Enums"]["cart_item_status"]
           user_id?: string
         }
         Relationships: [

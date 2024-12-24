@@ -70,7 +70,7 @@ const MagicBanner = () => {
                     </h1>
                   </div>
                 </div>
-                <Link to="/categories">
+                <Link to="/shop">
                   <button
                     type="button"
                     className="mt-14 text-white bg-gradient-to-r bg-primary focus:ring-4 focus:outline-none focus:ring-pink-300 dark:focus:ring-pink-800 font-medium rounded-lg text-lg px-7 py-2 text-center mb-2"

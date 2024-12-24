@@ -1,4 +1,4 @@
-import { Menu, X, LogOut, LogIn, Home, ShoppingBag, Info, IndianRupee } from "lucide-react"; 
+import { Menu, X, LogOut, LogIn, Home, ShoppingBag, Info, IndianRupee, Book } from "lucide-react"; 
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
@@ -84,6 +84,10 @@ export const Navbar = () => {
               <Info size={18} />
               <span>About</span>
             </Link>
+            <Link to="/library" className="hover:text-gray-600 flex items-center space-x-1">
+            <Book size={18} /> 
+             <span>Library</span>
+            </Link>
             <Link to="/pricing" className="hover:text-gray-600 flex items-center space-x-1">
               <IndianRupee size={18} />
               <span>Pricing</span>
@@ -133,6 +137,10 @@ export const Navbar = () => {
                 <Info size={18} />
                 <span>About</span>
               </Link>
+              <Link to="/library" className="hover:text-gray-600 flex items-center space-x-1">
+            <Book size={18} /> 
+             <span>Library</span>
+            </Link>
               {profile?.role === 'admin' && (
                 <Link to="/admin" className="hover:text-gray-600">Admin</Link>
               )}
