@@ -106,7 +106,7 @@ const Index = () => {
         <section className="section-padding bg-slate-50 relative z-10">
           <div className="container mx-auto">
             <div className="flex flex-col items-center mb-8">
-              <h2 className="text-3xl font-bold text-center mb-6">Featured Products</h2>
+              <h2 className="text-3xl font-bold text-center mb-6">Products</h2>
               <div className="flex gap-2 flex-wrap justify-center">
                 <Button
                   variant={selectedCategory === null ? "default" : "outline"}
