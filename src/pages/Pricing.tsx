@@ -88,7 +88,7 @@ const Pricing = () => {
 
       // Initialize Razorpay payment
       const options = {
-        key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+        key: "rzp_test_51KxD6F7yZVE8Zj",  // Replace with your Razorpay key ID
         amount: amount,
         currency: currency,
         name: "Your Company Name",

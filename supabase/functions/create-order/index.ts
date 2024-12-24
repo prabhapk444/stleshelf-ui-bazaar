@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import Razorpay from "npm:razorpay@2.9.2";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -12,24 +13,31 @@ const razorpay = new Razorpay({
 });
 
 serve(async (req) => {
+  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const { amount, currency = "INR", package_id, user_id } = await req.json();
+    const { amount, package_id, user_id } = await req.json();
 
+    console.log('Creating order with:', { amount, package_id, user_id });
+
+    // Create Razorpay order
     const order = await razorpay.orders.create({
-      amount: amount * 100, // Razorpay expects amount in smallest currency unit (paise)
-      currency,
+      amount: Math.round(amount * 100), // Convert to smallest currency unit (paise)
+      currency: 'INR',
     });
 
-    // Store order in database
+    console.log('Razorpay order created:', order);
+
+    // Initialize Supabase client
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL')!,
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
     );
 
+    // Store order in database
     const { data, error } = await supabaseClient
       .from('orders')
       .insert([
@@ -44,7 +52,12 @@ serve(async (req) => {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      console.error('Database error:', error);
+      throw error;
+    }
+
+    console.log('Order stored in database:', data);
 
     return new Response(
       JSON.stringify({ 
