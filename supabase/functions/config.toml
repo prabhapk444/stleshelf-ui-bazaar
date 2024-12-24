@@ -1,0 +1,6 @@
+project_id = "rqrvppyckxcumzcgoogd"
+
+[create-order.import_map]
+imports = {
+  "npm:razorpay@2.9.2" = "https://esm.sh/razorpay@2.9.2"
+}

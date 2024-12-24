@@ -2,20 +2,30 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Footer } from "@/components/Footer";
 import { Navbar } from "@/components/Navbar";
+import { useToast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router-dom";
+
+declare global {
+  interface Window {
+    Razorpay: any;
+  }
+}
 
 interface Pricing {
   created_at: string | null;
   discount: number | null;
-  id: number;
+  id: string;
   package_description: string;
   package_name: string;
-  package_price: number;
+  package_price: string;
 }
 
 const Pricing = () => {
   const [pricingData, setPricingData] = useState<Pricing[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { toast } = useToast();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchPricingData = async () => {
@@ -26,13 +36,7 @@ const Pricing = () => {
           setError("Failed to fetch pricing data.");
           console.error("Error fetching pricing data:", error.message);
         } else {
-          const transformedData = data?.map((item) => ({
-            ...item,
-            id: parseInt(item.id, 10),
-            package_price: parseFloat(item.package_price),
-          })) as Pricing[];
-
-          setPricingData(transformedData || []);
+          setPricingData(data || []);
         }
       } catch (err) {
         setError("Unexpected error occurred.");
@@ -43,7 +47,88 @@ const Pricing = () => {
     };
 
     fetchPricingData();
+
+    // Load Razorpay script
+    const script = document.createElement("script");
+    script.src = "https://checkout.razorpay.com/v1/checkout.js";
+    script.async = true;
+    document.body.appendChild(script);
+
+    return () => {
+      document.body.removeChild(script);
+    };
   }, []);
+
+  const handlePayment = async (pricing: Pricing) => {
+    try {
+      const session = await supabase.auth.getSession();
+      if (!session.data.session) {
+        toast({
+          title: "Authentication Required",
+          description: "Please login to make a purchase",
+          variant: "destructive",
+        });
+        navigate("/auth");
+        return;
+      }
+
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      // Create order
+      const response = await supabase.functions.invoke('create-order', {
+        body: {
+          amount: parseFloat(pricing.package_price),
+          package_id: pricing.id,
+          user_id: user?.id
+        },
+      });
+
+      if (response.error) throw new Error(response.error.message);
+      const { orderId, amount, currency } = response.data;
+
+      // Initialize Razorpay payment
+      const options = {
+        key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+        amount: amount,
+        currency: currency,
+        name: "Your Company Name",
+        description: pricing.package_name,
+        order_id: orderId,
+        handler: async function (response: any) {
+          // Handle successful payment
+          toast({
+            title: "Payment Successful",
+            description: `Payment ID: ${response.razorpay_payment_id}`,
+          });
+          
+          // Update order status
+          await supabase
+            .from('orders')
+            .update({ order_status: 'completed' })
+            .eq('payment_id', orderId);
+
+          // Redirect to success page or show success message
+          navigate('/');
+        },
+        prefill: {
+          email: user?.email,
+        },
+        theme: {
+          color: "#3B82F6",
+        },
+      };
+
+      const razorpay = new window.Razorpay(options);
+      razorpay.open();
+    } catch (err: any) {
+      console.error("Payment error:", err);
+      toast({
+        title: "Payment Error",
+        description: err.message,
+        variant: "destructive",
+      });
+    }
+  };
 
   return (
     <>
@@ -58,7 +143,7 @@ const Pricing = () => {
         ) : error ? (
           <p className="text-center text-red-500 text-lg">{error}</p>
         ) : pricingData.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 mt-8">
             {pricingData.map((row) => (
               <div
                 key={row.id}
@@ -77,7 +162,7 @@ const Pricing = () => {
                   ₹{row.package_price}
                 </p>
                 <button
-                  type="button"
+                  onClick={() => handlePayment(row)}
                   className="w-full mt-6 py-2 text-white bg-blue-600 hover:bg-blue-700 rounded-lg font-medium text-lg focus:ring-4 focus:ring-blue-300 focus:outline-none"
                 >
                   Get Package
