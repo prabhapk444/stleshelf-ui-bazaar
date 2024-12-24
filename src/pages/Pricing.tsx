@@ -48,7 +48,6 @@ const Pricing = () => {
 
     fetchPricingData();
 
-    // Load Razorpay script
     const script = document.createElement("script");
     script.src = "https://checkout.razorpay.com/v1/checkout.js";
     script.async = true;
@@ -88,27 +87,52 @@ const Pricing = () => {
 
       // Initialize Razorpay payment
       const options = {
-        key: "rzp_live_tkguofZ2ybrx3B",  // Replace with your Razorpay key ID
+        key: "rzp_live_tkguofZ2ybrx3B",
         amount: amount,
         currency: currency,
         name: "StyleShelf",
         description: pricing.package_name,
         order_id: orderId,
         handler: async function (response: any) {
-          // Handle successful payment
-          toast({
-            title: "Payment Successful",
-            description: `Payment ID: ${response.razorpay_payment_id}`,
-          });
-          
-          // Update order status
-          await supabase
-            .from('orders')
-            .update({ order_status: 'completed' })
-            .eq('payment_id', orderId);
+          try {
+            // Update order status
+            await supabase
+              .from('orders')
+              .update({ 
+                order_status: 'completed',
+                payment_id: response.razorpay_payment_id 
+              })
+              .eq('payment_id', orderId);
 
-          // Redirect to success page or show success message
-          navigate('/');
+            // Send confirmation email
+            const emailResponse = await supabase.functions.invoke('send-payment-email', {
+              body: {
+                to: user?.email,
+                packageName: pricing.package_name,
+                amount: parseFloat(pricing.package_price),
+                orderId: orderId,
+                paymentId: response.razorpay_payment_id
+              },
+            });
+
+            if (emailResponse.error) {
+              console.error("Error sending email:", emailResponse.error);
+            }
+
+            toast({
+              title: "Payment Successful",
+              description: `Payment ID: ${response.razorpay_payment_id}`,
+            });
+            
+            navigate('/');
+          } catch (err) {
+            console.error("Error in payment handler:", err);
+            toast({
+              title: "Error",
+              description: "There was an error processing your payment",
+              variant: "destructive",
+            });
+          }
         },
         prefill: {
           email: user?.email,
