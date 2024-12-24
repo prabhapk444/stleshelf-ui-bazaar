@@ -1,4 +1,4 @@
-import { Menu, X, LogOut, LogIn, Home, ShoppingBag, Info, IndianRupee, Book, Contact } from "lucide-react"; 
+import { Menu, X, LogOut, LogIn, Home, ShoppingBag, Info, IndianRupee, Book, Contact, Edit, ThumbsUp } from "lucide-react"; 
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
@@ -96,6 +96,10 @@ export const Navbar = () => {
               <Contact size={18} />
               <span>Contact us</span>
             </Link>
+            <Link to="/auth/feedback" className="hover:text-gray-600 flex items-center space-x-1">
+              <ThumbsUp size={18} />
+              <span>Rate Us</span>
+            </Link>
             {profile?.role === 'admin' && (
               <Link to="/admin" className="hover:text-gray-600">Admin</Link>
             )}
@@ -148,6 +152,10 @@ export const Navbar = () => {
             <Link to="/auth/contact" className="hover:text-gray-600 flex items-center space-x-1">
               <Contact size={18} />
               <span>Contact us</span>
+            </Link>
+            <Link to="/auth/feedback" className="hover:text-gray-600 flex items-center space-x-1">
+              <ThumbsUp size={18} />
+              <span>Rate Us</span>
             </Link>
               {profile?.role === 'admin' && (
                 <Link to="/admin" className="hover:text-gray-600">Admin</Link>
