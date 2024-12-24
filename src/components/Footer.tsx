@@ -36,6 +36,12 @@ export const Footer = () => {
               <li>
                 <Link to="/about" className="text-gray-600 hover:text-gray-900">About</Link>
               </li>
+              <li>
+                <Link to="/auth/contact" className="text-gray-600 hover:text-gray-900">Contact</Link>
+              </li>
+              <li>
+                <Link to="/auth/feedback" className="text-gray-600 hover:text-gray-900">Feedback</Link>
+              </li>
             </ul>
           </div>
 
@@ -43,13 +49,13 @@ export const Footer = () => {
             <h3 className="text-lg font-semibold mb-4">Categories</h3>
             <ul className="space-y-2">
               <li>
-                <Link to="/shop" className="text-gray-600 hover:text-gray-900">New Arrivals</Link>
+                <Link to="/shop" className="text-gray-600 hover:text-gray-900">E-commerce</Link>
               </li>
               <li>
-                <Link to="/shop" className="text-gray-600 hover:text-gray-900">Best Sellers</Link>
+                <Link to="/shop" className="text-gray-600 hover:text-gray-900">Marketing</Link>
               </li>
               <li>
-                <Link to="/shop" className="text-gray-600 hover:text-gray-900">Trending</Link>
+                <Link to="/shop" className="text-gray-600 hover:text-gray-900">Application UI</Link>
               </li>
             </ul>
           </div>

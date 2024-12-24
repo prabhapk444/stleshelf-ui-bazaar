@@ -5,6 +5,8 @@ import { useToast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import Container from "@/components/Container";
+import { Navbar } from "@/components/Navbar";
+import { Footer } from "@/components/Footer";
 
 const Feedback = () => {
   const [rating, setRating] = useState<number>(0);
@@ -50,7 +52,7 @@ const Feedback = () => {
   };
 
   return (
-    <Container>
+    <><Navbar /><Container>
       <div className="min-h-screen py-12">
         <div className="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden md:max-w-2xl p-8">
           <div className="flex items-center justify-center mb-6">
@@ -73,12 +75,9 @@ const Feedback = () => {
                     className="focus:outline-none transform transition-transform hover:scale-110"
                   >
                     <Star
-                      className={`h-8 w-8 ${
-                        star <= (hoveredRating || rating)
+                      className={`h-8 w-8 ${star <= (hoveredRating || rating)
                           ? "fill-yellow-400 text-yellow-400"
-                          : "text-gray-300"
-                      }`}
-                    />
+                          : "text-gray-300"}`} />
                   </button>
                 ))}
               </div>
@@ -93,8 +92,7 @@ const Feedback = () => {
                 onChange={(e) => setComment(e.target.value)}
                 className="mt-1"
                 placeholder="Share your thoughts..."
-                rows={4}
-              />
+                rows={4} />
             </div>
             <Button
               type="submit"
@@ -107,6 +105,8 @@ const Feedback = () => {
         </div>
       </div>
     </Container>
+<Footer/>
+    </>
   );
 };
 

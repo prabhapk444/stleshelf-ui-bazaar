@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import Container from "@/components/Container";
+import { Navbar } from "@/components/Navbar";
+import { Footer } from "@/components/Footer";
 
 const Contact = () => {
   const [name, setName] = useState("");
@@ -44,6 +46,7 @@ const Contact = () => {
   };
 
   return (
+    <><Navbar /><br />
     <Container>
       <div className="min-h-screen py-12">
         <div className="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden md:max-w-2xl p-8">
@@ -51,7 +54,7 @@ const Contact = () => {
             <Mail className="h-12 w-12 text-gray-600" />
           </div>
           <h2 className="text-2xl font-bold text-center mb-8">Contact Us</h2>
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-6" autoComplete="off">
             <div>
               <label htmlFor="name" className="block text-sm font-medium text-gray-700">
                 Name
@@ -63,8 +66,7 @@ const Contact = () => {
                 onChange={(e) => setName(e.target.value)}
                 required
                 className="mt-1"
-                placeholder="Your name"
-              />
+                placeholder="Your name" />
             </div>
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700">
@@ -77,8 +79,7 @@ const Contact = () => {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 className="mt-1"
-                placeholder="your@email.com"
-              />
+                placeholder="your@email.com" />
             </div>
             <div>
               <label htmlFor="message" className="block text-sm font-medium text-gray-700">
@@ -91,8 +92,7 @@ const Contact = () => {
                 required
                 className="mt-1"
                 placeholder="Your message"
-                rows={4}
-              />
+                rows={4} />
             </div>
             <Button
               type="submit"
@@ -105,6 +105,8 @@ const Contact = () => {
         </div>
       </div>
     </Container>
+    <Footer/>
+    </>
   );
 };
 
