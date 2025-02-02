@@ -7,7 +7,7 @@ const About = () => {
     <div className="min-h-screen flex flex-col">
       <Navbar />
       <main className="flex-grow pt-24">
-        {/* Hero Section */}
+       
         <section className="bg-gray-50 py-16">
           <div className="container mx-auto px-4">
             <div className="max-w-3xl mx-auto text-center">
@@ -20,8 +20,6 @@ const About = () => {
             </div>
           </div>
         </section>
-
-        {/* Values Section */}
         <section className="py-16">
           <div className="container mx-auto px-4">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -68,7 +66,6 @@ const About = () => {
           </div>
         </section>
 
-        {/* Story Section */}
         <section className="bg-gray-50 py-16">
           <div className="container mx-auto px-4">
             <div className="max-w-3xl mx-auto">
