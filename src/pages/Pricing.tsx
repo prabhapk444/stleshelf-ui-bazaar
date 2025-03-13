@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Footer } from "@/components/Footer";
@@ -112,17 +111,32 @@ const Pricing = () => {
                 packageName: pricing.package_name,
                 amount: parseFloat(pricing.package_price),
                 orderId: orderId,
-                paymentId: response.razorpay_payment_id
+                paymentId: response.razorpay_payment_id,
+                documentUrl: pricing.document_url
               },
             });
 
             if (emailResponse.error) {
               console.error("Error sending email:", emailResponse.error);
+              toast({
+                title: "Warning",
+                description: "Payment successful but there was an issue sending the confirmation email",
+                variant: "destructive",
+              });
+            } else {
+              if (emailResponse.data && emailResponse.data.licenseId) {
+                await supabase
+                  .from('orders')
+                  .update({ 
+                    license_id: emailResponse.data.licenseId
+                  })
+                  .eq('payment_id', orderId);
+              }
             }
 
             toast({
               title: "Payment Successful",
-              description: `Payment ID: ${response.razorpay_payment_id}`,
+              description: `Payment ID: ${response.razorpay_payment_id}. A confirmation email has been sent with your purchase details.`,
             });
             
             navigate('/');
@@ -187,14 +201,9 @@ const Pricing = () => {
                   ₹{row.package_price}
                 </p>
                 {row.document_url && (
-                  <a
-                    href={row.document_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center text-blue-600 hover:underline mt-4 mb-2"
-                  >
-                    <FileText className="h-4 w-4 mr-1" /> View Package Details
-                  </a>
+                  <div className="flex items-center text-blue-600 mt-4 mb-2">
+                    <FileText className="h-4 w-4 mr-1" /> Document included with purchase
+                  </div>
                 )}
                 <button
                   onClick={() => handlePayment(row)}

@@ -1,3 +1,4 @@
+
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import Razorpay from "npm:razorpay@2.9.2";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
@@ -37,6 +38,17 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
     );
 
+    // Get document URL from pricing package
+    const { data: packageData, error: packageError } = await supabaseClient
+      .from('pricing')
+      .select('document_url')
+      .eq('id', package_id)
+      .single();
+      
+    if (packageError) {
+      console.error('Error fetching package:', packageError);
+    }
+
     // Store order in database
     const { data, error } = await supabaseClient
       .from('orders')
@@ -46,7 +58,8 @@ serve(async (req) => {
           package_id,
           amount,
           payment_id: order.id,
-          order_status: 'created'
+          order_status: 'created',
+          license_id: null // Will be updated after payment confirmation
         }
       ])
       .select()
@@ -64,7 +77,8 @@ serve(async (req) => {
         orderId: order.id,
         amount: order.amount,
         currency: order.currency,
-        dbOrder: data
+        dbOrder: data,
+        documentUrl: packageData?.document_url
       }),
       { 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
