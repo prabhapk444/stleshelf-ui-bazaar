@@ -1,7 +1,5 @@
-
 import { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
-import { uploadProductImage } from "@/utils/fileUpload";
 import { supabase } from "@/integrations/supabase/client";
 import { Loader2 } from "lucide-react";
 
@@ -39,13 +37,13 @@ export const PricingForm = ({ initialData, onSave, onCancel }: any) => {
       const filePath = `${fileName}`;
 
       const { data, error } = await supabase.storage
-        .from('product-images')
+        .from('pricing-documents')
         .upload(filePath, file);
 
       if (error) throw error;
 
       const { data: { publicUrl } } = supabase.storage
-        .from('product-images')
+        .from('pricing-documents')
         .getPublicUrl(filePath);
       
       setFormData((prev) => ({
