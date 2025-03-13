@@ -1,16 +1,17 @@
+
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Footer } from "@/components/Footer";
 import { Navbar } from "@/components/Navbar";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
+import { FileText } from "lucide-react";
 
 declare global {
   interface Window {
     Razorpay: any;
   }
 }
-
 
 interface Pricing {
   created_at: string | null;
@@ -19,6 +20,7 @@ interface Pricing {
   package_description: string;
   package_name: string;
   package_price: string;
+  document_url: string | null;
 }
 
 const Pricing = () => {
@@ -184,6 +186,16 @@ const Pricing = () => {
                 <p className="text-xl font-semibold text-gray-800">
                   ₹{row.package_price}
                 </p>
+                {row.document_url && (
+                  <a
+                    href={row.document_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center text-blue-600 hover:underline mt-4 mb-2"
+                  >
+                    <FileText className="h-4 w-4 mr-1" /> View Package Details
+                  </a>
+                )}
                 <button
                   onClick={() => handlePayment(row)}
                   className="w-full mt-6 py-2 text-white bg-blue-600 hover:bg-blue-700 rounded-lg font-medium text-lg focus:ring-4 focus:ring-blue-300 focus:outline-none"

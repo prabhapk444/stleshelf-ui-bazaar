@@ -1,5 +1,6 @@
+
 import { Button } from "../ui/button";
-import { Pencil, Trash2 } from "lucide-react";
+import { Pencil, Trash2, FileText } from "lucide-react";
 
 export const PricingGrid = ({ pricing, onEdit, onDelete }: any) => {
   return (
@@ -11,6 +12,16 @@ export const PricingGrid = ({ pricing, onEdit, onDelete }: any) => {
           <p className="font-medium text-lg text-gray-900">₹{item.package_price}</p>
           {item.discount && (
             <p className="text-green-500">Discount: {item.discount}%</p>
+          )}
+          {item.document_url && (
+            <a 
+              href={item.document_url} 
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center text-blue-600 hover:underline mt-2 text-sm"
+            >
+              <FileText className="h-4 w-4 mr-1" /> View Document
+            </a>
           )}
           <div className="flex justify-end space-x-2 mt-4">
             <Button

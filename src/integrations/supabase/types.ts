@@ -152,6 +152,7 @@ export type Database = {
         Row: {
           created_at: string | null
           discount: number | null
+          document_url: string | null
           id: string
           package_description: string
           package_name: string
@@ -160,6 +161,7 @@ export type Database = {
         Insert: {
           created_at?: string | null
           discount?: number | null
+          document_url?: string | null
           id?: string
           package_description: string
           package_name: string
@@ -168,6 +170,7 @@ export type Database = {
         Update: {
           created_at?: string | null
           discount?: number | null
+          document_url?: string | null
           id?: string
           package_description?: string
           package_name?: string
