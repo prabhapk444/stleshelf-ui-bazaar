@@ -305,7 +305,13 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      update_order_license: {
+        Args: {
+          p_payment_id: string
+          p_license_id: string
+        }
+        Returns: undefined
+      }
     }
     Enums: {
       cart_item_status: "pending" | "purchased"
