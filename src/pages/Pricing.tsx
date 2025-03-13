@@ -125,12 +125,18 @@ const Pricing = () => {
               });
             } else {
               if (emailResponse.data && emailResponse.data.licenseId) {
-                await supabase
-                  .from('orders')
-                  .update({ 
-                    license_id: emailResponse.data.licenseId
-                  })
-                  .eq('payment_id', orderId);
+                try {
+                  const { error } = await supabase.rpc('update_order_license', {
+                    p_payment_id: orderId,
+                    p_license_id: emailResponse.data.licenseId
+                  });
+                  
+                  if (error) {
+                    console.error("Error updating license ID:", error);
+                  }
+                } catch (err) {
+                  console.error("Error in license ID update:", err);
+                }
               }
             }
 

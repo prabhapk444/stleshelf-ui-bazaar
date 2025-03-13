@@ -112,6 +112,7 @@ export type Database = {
           amount: number
           created_at: string | null
           id: string
+          license_id: string | null
           order_status: string | null
           package_id: string | null
           payment_id: string | null
@@ -122,6 +123,7 @@ export type Database = {
           amount: number
           created_at?: string | null
           id?: string
+          license_id?: string | null
           order_status?: string | null
           package_id?: string | null
           payment_id?: string | null
@@ -132,6 +134,7 @@ export type Database = {
           amount?: number
           created_at?: string | null
           id?: string
+          license_id?: string | null
           order_status?: string | null
           package_id?: string | null
           payment_id?: string | null
