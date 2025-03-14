@@ -15,7 +15,6 @@ interface EmailRequest {
   orderId: string;
   paymentId: string;
   documentUrl: string | null;
-  licenseId: string;
 }
 
 // Function to generate a random 10-digit license ID
