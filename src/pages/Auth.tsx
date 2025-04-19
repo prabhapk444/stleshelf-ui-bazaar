@@ -1,3 +1,4 @@
+
 import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
 import { supabase } from "@/integrations/supabase/client";
@@ -19,8 +20,25 @@ const AuthPage = () => {
     
     checkUser();
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (event === 'SIGNED_IN') {
+        // Try to create a profile for the new user
+        if (session && (event === 'SIGNED_IN' || event === 'USER_UPDATED')) {
+          const { error } = await supabase
+            .from('profiles')
+            .upsert({ 
+              id: session.user.id,
+              email: session.user.email,
+              updated_at: new Date().toISOString()
+            }, { 
+              onConflict: 'id' 
+            });
+            
+          if (error) {
+            console.error("Error updating profile:", error);
+          }
+        }
+        
         toast({
           title: "Welcome back!",
           description: "You have successfully signed in.",

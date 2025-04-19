@@ -4,12 +4,15 @@ import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
+import { useToast } from "@/components/ui/use-toast";
 
 export const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [profile, setProfile] = useState<{ name: string | null; role: string | null } | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const navigate = useNavigate();
+  const { toast } = useToast();
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -18,23 +21,42 @@ export const Navbar = () => {
         const { data: { session } } = await supabase.auth.getSession();
         
         if (session?.user) {
+          setIsAuthenticated(true);
+          
           const { data: profileData, error } = await supabase
             .from("profiles")
             .select("name, role")
             .eq("id", session.user.id)
-            .single();
+            .maybeSingle();
             
-          if (error) {
+          if (error && error.code !== 'PGRST116') {
             console.error("Error fetching profile:", error);
             setProfile(null);
-          } else {
+          } else if (profileData) {
             setProfile(profileData);
+          } else {
+            const { error: insertError } = await supabase
+              .from("profiles")
+              .insert({ 
+                id: session.user.id, 
+                email: session.user.email,
+                name: null,
+                role: 'user'
+              });
+              
+            if (insertError) {
+              console.error("Error creating profile:", insertError);
+            } else {
+              setProfile({ name: null, role: 'user' });
+            }
           }
         } else {
+          setIsAuthenticated(false);
           setProfile(null);
         }
       } catch (error) {
         console.error("Error in auth check:", error);
+        setIsAuthenticated(false);
         setProfile(null);
       } finally {
         setIsLoading(false);
@@ -43,10 +65,12 @@ export const Navbar = () => {
 
     fetchProfile();
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (session) {
+        setIsAuthenticated(true);
         fetchProfile();
       } else {
+        setIsAuthenticated(false);
         setProfile(null);
       }
     });
@@ -57,10 +81,20 @@ export const Navbar = () => {
   const handleSignOut = async () => {
     try {
       await supabase.auth.signOut();
+      setIsAuthenticated(false);
       setProfile(null);
+      toast({
+        title: "Signed out",
+        description: "You have been successfully signed out.",
+      });
       navigate("/auth");
     } catch (error) {
       console.error("Error signing out:", error);
+      toast({
+        title: "Error",
+        description: "There was a problem signing out. Please try again.",
+        variant: "destructive",
+      });
     }
   };
 
@@ -85,8 +119,8 @@ export const Navbar = () => {
               <span>About</span>
             </Link>
             <Link to="/library" className="hover:text-gray-600 flex items-center space-x-1">
-            <Book size={18} /> 
-             <span>Library</span>
+              <Book size={18} /> 
+              <span>Library</span>
             </Link>
             <Link to="/pricing" className="hover:text-gray-600 flex items-center space-x-1">
               <IndianRupee size={18} />
@@ -107,7 +141,7 @@ export const Navbar = () => {
           <div className="hidden md:flex items-center space-x-4">
             {isLoading ? (
               <div className="h-10 w-24 bg-gray-200 animate-pulse rounded" />
-            ) : profile ? (
+            ) : isAuthenticated ? (
               <Button variant="ghost" onClick={handleSignOut} className="flex items-center">
                 <LogOut size={16} className="mr-2" /> Sign Out
               </Button>
@@ -146,21 +180,21 @@ export const Navbar = () => {
                 <span>About</span>
               </Link>
               <Link to="/library" className="hover:text-gray-600 flex items-center space-x-1">
-            <Book size={18} /> 
-             <span>Library</span>
-            </Link>
-            <Link to="/auth/contact" className="hover:text-gray-600 flex items-center space-x-1">
-              <Contact size={18} />
-              <span>Contact us</span>
-            </Link>
-            <Link to="/auth/feedback" className="hover:text-gray-600 flex items-center space-x-1">
-              <ThumbsUp size={18} />
-              <span>Rate Us</span>
-            </Link>
+                <Book size={18} /> 
+                <span>Library</span>
+              </Link>
+              <Link to="/auth/contact" className="hover:text-gray-600 flex items-center space-x-1">
+                <Contact size={18} />
+                <span>Contact us</span>
+              </Link>
+              <Link to="/auth/feedback" className="hover:text-gray-600 flex items-center space-x-1">
+                <ThumbsUp size={18} />
+                <span>Rate Us</span>
+              </Link>
               {profile?.role === 'admin' && (
                 <Link to="/admin" className="hover:text-gray-600">Admin</Link>
               )}
-              {profile ? (
+              {isAuthenticated ? (
                 <Button
                   variant="ghost"
                   onClick={handleSignOut}
