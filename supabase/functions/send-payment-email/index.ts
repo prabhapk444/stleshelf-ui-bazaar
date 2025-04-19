@@ -35,6 +35,7 @@ serve(async (req) => {
     const licenseId = generateLicenseId();
     
     console.log("Sending email to:", to, "for package:", packageName);
+    console.log("Document URL:", documentUrl);
     console.log("Using RESEND_API_KEY:", RESEND_API_KEY ? "Key exists" : "Key missing");
 
     let documentSection = '';
