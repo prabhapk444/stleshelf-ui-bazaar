@@ -35,6 +35,7 @@ serve(async (req) => {
     const licenseId = generateLicenseId();
     
     console.log("Sending email to:", to, "for package:", packageName);
+    console.log("Using RESEND_API_KEY:", RESEND_API_KEY ? "Key exists" : "Key missing");
 
     let documentSection = '';
     if (documentUrl) {
@@ -78,6 +79,11 @@ serve(async (req) => {
       </div>
     `;
 
+    if (!RESEND_API_KEY) {
+      throw new Error("RESEND_API_KEY is not configured in environment");
+    }
+
+    console.log("Making API request to Resend...");
     const res = await fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: {
@@ -92,10 +98,12 @@ serve(async (req) => {
       }),
     });
 
+    console.log("Resend API response status:", res.status);
+    
     if (!res.ok) {
-      const error = await res.text();
-      console.error("Resend API error:", error);
-      throw new Error("Failed to send email");
+      const errorText = await res.text();
+      console.error("Resend API error response:", errorText);
+      throw new Error(`Failed to send email: ${errorText}`);
     }
 
     const data = await res.json();
@@ -106,7 +114,7 @@ serve(async (req) => {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (error) {
-    console.error("Error sending email:", error);
+    console.error("Error sending email:", error.message, error.stack);
     return new Response(
       JSON.stringify({ error: error.message }),
       { 
