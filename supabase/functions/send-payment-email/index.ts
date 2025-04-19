@@ -92,7 +92,7 @@ serve(async (req) => {
         Authorization: `Bearer ${RESEND_API_KEY}`,
       },
       body: JSON.stringify({
-        from: "StyleShelf <onboarding@resend.dev>",
+        from: "onboarding@resend.dev", // Using Resend's default onboarding email which doesn't require domain verification
         to: [to],
         subject: "Payment Successful - StyleShelf",
         html: emailContent,
