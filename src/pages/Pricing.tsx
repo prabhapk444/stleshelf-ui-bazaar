@@ -98,6 +98,7 @@ const Pricing = () => {
         order_id: orderId,
         handler: async function (response: any) {
           try {
+            // Update the order status to completed
             await supabase
               .from('orders')
               .update({ 
@@ -105,7 +106,18 @@ const Pricing = () => {
                 payment_id: response.razorpay_payment_id 
               })
               .eq('payment_id', orderId);
+            
+            // Console log for debugging
+            console.log("Sending email with data:", {
+              to: user?.email,
+              packageName: pricing.package_name,
+              amount: parseFloat(pricing.package_price),
+              orderId: orderId,
+              paymentId: response.razorpay_payment_id,
+              documentUrl: pricing.document_url
+            });
 
+            // Send confirmation email
             const emailResponse = await supabase.functions.invoke('send-payment-email', {
               body: {
                 to: user?.email,
@@ -116,6 +128,9 @@ const Pricing = () => {
                 documentUrl: pricing.document_url
               },
             });
+
+            // Log the email response for debugging
+            console.log("Email sending response:", emailResponse);
 
             if (emailResponse.error) {
               console.error("Error sending email:", emailResponse.error);
