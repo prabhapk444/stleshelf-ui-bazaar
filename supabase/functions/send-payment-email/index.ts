@@ -42,9 +42,9 @@ serve(async (req) => {
     if (documentUrl) {
       documentSection = `
         <div style="margin-top: 20px; padding: 15px; background-color: #f5f5f5; border-radius: 5px;">
-          <h3 style="color: #3B82F6;">Your Purchase Document</h3>
-          <p>Access your document using the link below:</p>
-          <a href="${documentUrl}" style="display: inline-block; background-color: #3B82F6; color: white; padding: 10px 15px; text-decoration: none; border-radius: 5px; margin-top: 10px;">Download Document</a>
+          <h3 style="color: #3B82F6;">Your Purchase</h3>
+          <p>Access your file using the link below:</p>
+          <a href="${documentUrl}" style="display: inline-block; background-color: #3B82F6; color: white; padding: 10px 15px; text-decoration: none; border-radius: 5px; margin-top: 10px;">Download</a>
         </div>
       `;
     }
