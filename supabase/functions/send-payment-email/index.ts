@@ -81,6 +81,7 @@ serve(async (req) => {
     `;
 
     if (!RESEND_API_KEY) {
+      console.error("RESEND_API_KEY is not configured in environment");
       throw new Error("RESEND_API_KEY is not configured in environment");
     }
 
